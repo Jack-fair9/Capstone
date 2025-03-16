@@ -184,7 +184,7 @@
     <div class="navbar">
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="about.html">About Us</a>
+            <a href="aboutus.html">About Us</a>
             <a href="contact.html">Contact</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
@@ -201,7 +201,7 @@
     
     <div class="container">
         <a href="Login.html">Already have an account? Sign in</a>
-        <h1>Needle</h1>
+        <h1>Needel</h1>
         <h2>Signup</h2>
         <h4>The Signup is free. This takes only a few minutes.<br> Make your job search easier.</h4>
         
@@ -249,6 +249,7 @@
                 const result = await response.json();
                 if (response.ok) {
                     alert(result.message);
+                    window.location.href = 'Login.html'; // Redirect to Login page
                 } else {
                     errorMessage.textContent = result.message;
                 }

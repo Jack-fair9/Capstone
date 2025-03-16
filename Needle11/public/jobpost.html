@@ -73,7 +73,7 @@
             margin-top: 15px;
             color: #4c3c92;
         }
-        input {
+        input, textarea {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -148,10 +148,11 @@
                 location: document.getElementById("location").value.trim(),
                 salary: document.getElementById("salary").value.trim(),
                 skills: document.getElementById("skills").value.trim(),
-                company: document.getElementById("company").value.trim()
+                company: document.getElementById("company").value.trim(),
+                description: document.getElementById("description").value.trim()
             };
             
-            if (!job.position || !job.field || !job.location || !job.salary || !job.skills || !job.company) {
+            if (!job.position || !job.field || !job.location || !job.salary || !job.skills || !job.company || !job.description) {
                 alert("Please fill out all fields before publishing the job.");
                 return;
             }
@@ -166,11 +167,11 @@
     <!-- Navbar with Additional Links -->
     <div class="navbar">
         <a href="Home.html">Home</a>
-        <a href="about.html">About Us</a>
+        <a href="aboutus.html">About Us</a>
         <a href="contact.html">Contact Us</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
-        <a href="employer_account.html">Employer's Account</a>
+        <a href="employer.html">Employers</a>
         <a href="faq.html">FAQ</a>
         <a href="help.html">Help</a>
     </div>
@@ -196,6 +197,9 @@
         
         <label for="company">Company Name</label>
         <input type="text" id="company" name="company" required>
+        
+        <label for="description">Job Description</label>
+        <textarea id="description" name="description" maxlength="1000" required></textarea>
         
         <button class="button-class" onclick="publishJob()">Publish Job</button>
     </div>
