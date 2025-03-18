@@ -60,5 +60,5 @@ jobs:
         with:
           app-name: 'Needle'
           slot-name: 'Production'
-          package: .
+          package: Needle11/public
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_41715752F6B245A193CFFE48DBB9A171 }}
