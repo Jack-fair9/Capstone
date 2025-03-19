@@ -71,5 +71,5 @@ jobs:
         with:
           app-name: 'Needle'
           slot-name: 'Production'
-          package: .
+          package: /Public
           
