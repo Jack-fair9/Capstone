@@ -71,6 +71,5 @@ jobs:
         with:
           app-name: 'Needle'
           slot-name: 'Production'
-          package: /home/site/wwwroot
-          # Needle11/public
+          package: Needle11/public
           
