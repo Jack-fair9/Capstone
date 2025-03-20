@@ -62,13 +62,13 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B0AB11A784D84CF4892D7FED3F65B404 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1A8EE185BA2F4E639D56510D8932AB23 }}
 
-      - name: Configure Azure Web App to serve static files
-        run: |
-          az webapp config set \
-            --name 'Needle' \
-            --resource-group 'Needle' \
-            --linux-fx-version "NODE|22-lts" \
-            --startup-file "npx serve Needle11/public"
+     # - name: Configure Azure Web App to serve static files
+     #   run: |
+     #     az webapp config set \
+     #       --name 'Needle' \
+     #       --resource-group 'Needle' \
+     #       --linux-fx-version "NODE|22-lts" \
+      #      --startup-file "npx serve Needle11/public"
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
