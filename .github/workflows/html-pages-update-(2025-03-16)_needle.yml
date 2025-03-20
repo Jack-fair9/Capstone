@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - Needle
 
 on:
@@ -13,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +22,13 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          cd Needle11 # testing if the dir is a issue
+          cd Needle11
           npm install
           npm run build --if-present
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip Needle11/public -r
+        run: zip -r release.zip Needle11/public
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -46,8 +43,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -61,16 +58,17 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FA3B88BBB9A946598D1A5B6D8AC65E33 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B0AB11A784D84CF4892D7FED3F65B404 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1A8EE185BA2F4E639D56510D8932AB23 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      - name: Configure Azure Web App to use Needle11/public
+      - name: Configure start command for static files
         run: |
-          az webapp config appsettings set \
-            --name 'Needle' \
-            --resource-group 'Needle' \
-            --settings WEBSITE_RUN_FROM_PACKAGE=1
+          az webapp config set \
+            --name Needle \
+            --resource-group Needle \
+            --linux-fx-version "NODE|22-lts" \
+            --startup-file "npx serve Needle11/public"
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -78,4 +76,4 @@ jobs:
         with:
           app-name: 'Needle'
           slot-name: 'Production'
-          package: Needle11/public
+          package: release.zip
