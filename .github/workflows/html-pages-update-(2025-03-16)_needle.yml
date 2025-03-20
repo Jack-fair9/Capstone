@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Azure Web App - Needle # V2
+name: Build and deploy Node.js app to Azure Web App - Needle # V2 Working
 
 on:
   push:
