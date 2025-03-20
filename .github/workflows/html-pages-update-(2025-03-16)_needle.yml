@@ -70,7 +70,7 @@ jobs:
           az webapp config appsettings set \
             --name 'Needle' \
             --resource-group 'Needle' \
-            --settings WEBSITE_RUN_FROM_PACKAGE=True
+            --settings WEBSITE_RUN_FROM_PACKAGE= 1
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
