@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const { GridFSBucket } = require('mongodb');
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');  
 
 const app = express();
 const PORT = 3000;
@@ -14,14 +14,13 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public'))); 
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 const mongoURI = "mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('Failed to connect to MongoDB:', err));
-
 
 const conn = mongoose.connection;
 let gfs;
@@ -30,7 +29,7 @@ conn.once('open', () => {
     console.log('GridFS initialized');
 });
 
-// Schemas
+
 const userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
@@ -40,42 +39,32 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-const employerCredentialsSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    password: String
-}, { collection: 'employeracc' });
-const EmployerCredentials = mongoose.model('EmployerCredentials', employerCredentialsSchema);
-
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
-        user: "your-email@gmail.com", 
-        pass: "your-email-password"  
+        user: 'Needle.info1@gmail.com',  
+        pass: 'lqdv rhgm kiag vppz'      
     }
 });
 
 
-function sendWelcomeEmail(email, name) {
+const sendWelcomeEmail = (email, firstName) => {
     const mailOptions = {
-        from: "your-email@gmail.com",
+        from: 'Needle <Needle.info1@gmail.com>',
         to: email,
-        subject: "Welcome to Needle",
-        text: `Hello ${name}, welcome to Needle! We're glad to have you here.`
+        subject: 'Welcome to Needle!',
+        text: `Thank you for signing up with Needle, ${firstName}! We’re excited to have you join us.\n\nStay tuned for updates and feel free to reach out if you have any questions at Needle.info1@gmail.com.\n\nBest Regards,\nTeam Needle `
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log('Email error:', error);
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            console.error('Error sending email:', err);
         } else {
-            console.log('Email sent:', info.response);
+            console.log('Email sent successfully:', info.response);
         }
     });
-}
+};
 
 
 app.post('/signup', async (req, res) => {
@@ -90,14 +79,16 @@ app.post('/signup', async (req, res) => {
         }
         const newUser = new User({ firstName, lastName, email, phoneNumber, password });
         await newUser.save();
-        sendWelcomeEmail(email, firstName); 
+
+    
+        sendWelcomeEmail(email, firstName);
+
         res.status(201).json({ message: 'User registered successfully!' });
     } catch (err) {
         console.error('Error during signup:', err);
-        res.status(500).json({ message: 'Failed to register user. Please try again.' });
+        res.status(500).json({ message: 'Failed to register user. Please try again.', error: err.message });
     }
 });
-
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -116,6 +107,13 @@ app.post('/login', async (req, res) => {
     }
 });
 
+
+
+const employerCredentialsSchema = new mongoose.Schema({
+    email: { type: String, unique: true },
+    password: String
+}, { collection: 'employeracc' });
+const EmployerCredentials = mongoose.model('EmployerCredentials', employerCredentialsSchema);
 
 app.post('/employer-signup', async (req, res) => {
     const { email, password } = req.body;
@@ -136,7 +134,6 @@ app.post('/employer-signup', async (req, res) => {
     }
 });
 
-
 app.post('/employer-login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -155,6 +152,10 @@ app.post('/employer-login', async (req, res) => {
 });
 
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+
 app.post('/upload-job', upload.fields([
     { name: 'resume', maxCount: 1 },
     { name: 'coverletter', maxCount: 1 }
@@ -167,22 +168,20 @@ app.post('/upload-job', upload.fields([
     }
     try {
         const resumeFile = files.resume[0];
-        const coverLetterFile = files.coverletter ? files.coverletter[0] : null;
-
         const resumeStream = gfs.openUploadStream(`${Date.now()}-resume.pdf`, {
             contentType: resumeFile.mimetype,
             metadata: { name, email, type: 'resume' }
         });
         resumeStream.end(resumeFile.buffer);
 
-        if (coverLetterFile) {
+        if (files.coverletter) {
+            const coverLetterFile = files.coverletter[0];
             const coverLetterStream = gfs.openUploadStream(`${Date.now()}-coverletter.pdf`, {
                 contentType: coverLetterFile.mimetype,
                 metadata: { name, email, type: 'coverletter' }
             });
             coverLetterStream.end(coverLetterFile.buffer);
         }
-
         res.status(200).json({ message: 'Job application uploaded successfully!' });
     } catch (err) {
         console.error('Error uploading file:', err);
