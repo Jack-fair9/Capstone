@@ -4,7 +4,7 @@ name: Build and deploy Node.js app to Azure Web App - Needle # V3 MongoDB connec
 on:
   push:
     branches:
-      - HTML-Pages-update-(2025-03-16)
+      - Update-Test
   workflow_dispatch:
 
 jobs:
