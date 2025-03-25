@@ -23,11 +23,6 @@ mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('Failed to connect to MongoDB:', err));
 
-var mongoClient = require("mongodb").MongoClient;
-mongoClient.connect("mongodb://needle-server:tROM2O81w4jRIQl1PVUNQSdrNG4GOihkpLczx3c3TXSEBSibkLEFVDAFSe97MpZgLiAHUPweSyqeACDbtTDldA==@needle-server.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@needle-server@", function (err, db) {
-  db.close();
-}); //test point
-
 const conn = mongoose.connection;
 let gfs;
 conn.once('open', () => {
