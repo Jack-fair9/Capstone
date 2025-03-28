@@ -8,7 +8,7 @@ const { GridFSBucket } = require('mongodb');
 const nodemailer = require('nodemailer');  
 
 const app = express();
-const PORT = process.env.PORT || 10225; // dynamic port
+const PORT = process.env.PORT || 3000; // dynamic port
 //const PORT = 3000;
 
 // Middleware
