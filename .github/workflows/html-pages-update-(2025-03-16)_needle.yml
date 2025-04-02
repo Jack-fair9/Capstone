@@ -1,5 +1,5 @@
 # V3 MongoDB connection string
-name: Build and deploy Node.js app to Azure Web App - Needle # V3 MongoDB connection string
+name: Build and deploy Node.js app to Azure Web App - Needle # V3 MongoDB connection string test
 
 on:
   push:
