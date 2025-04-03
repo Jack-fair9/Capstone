@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup | Needel</title>
+    <style>
+        /* Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            background: #8a2be2;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Background */
+        body {
+            background: linear-gradient(to right, #ffffff, #d1a7f2);
+            color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding-top: 80px; /* Adjusted for navbar */
+        }
+
+        /* Logo and Title Section */
+        .header-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-container img {
+            width: 120px; /* Adjusted for better fit */
+            max-width: 100%;
+            height: auto;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: #444;
+            margin-top: 5px;
+        }
+
+        /* Signup Box */
+        .container {
+            max-width: 380px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Headings */
+        h1, h2, h4 {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        h1 { font-size: 2rem; margin-top: 10px; }
+        h2 { font-size: 1.5rem; margin-bottom: 5px; }
+        h4 { font-size: 0.95rem; margin-bottom: 15px; }
+
+        /* Form Styling */
+        .form-container {
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 9px;
+            margin-top: 4px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Signup Button */
+        .button-class {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .button-class:hover {
+            background-color: #6e1bbf;
+        }
+
+        /* Links */
+        a {
+            color: #8a2be2;
+            text-decoration: none;
+            display: block;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            input {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    
+    <div class="navbar">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="employer.html">Employer</a>
+            <a href="faq.html">FAQ</a>
+            <a href="help.html">Help</a>
+        </div>
+    </div>
+
+    
+    <div class="header-container">
+    </div>
+
+    
+    <div class="container">
+        <a href="Login.html">Already have an account? Sign in</a>
+        <h1>Needle</h1>
+        <h2>Signup</h2>
+        <h4>The Signup is free. This takes only a few minutes.<br> Make your job search easier.</h4>
+        
+        <form id="signupForm" class="form-container">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <p class="error-message" id="error-message"></p>
+            <button class="button-class" type="submit">Create Account</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+    
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const password = document.getElementById('password').value;
+    
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = "";
+    
+            try {
+                const response = await fetch('http://localhost:3000/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ firstName, lastName, email, phoneNumber, password }),
+                });
+    
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    window.location.href = 'login.html'; // Redirect to login page after signup
+                } else {
+                    errorMessage.textContent = result.message;
+                }
+            } catch (error) {
+                errorMessage.textContent = "Something went wrong. Please try again later.";
+                console.error(error);
+            }
+        });
+    </script>
+
+</body>
+</html>
