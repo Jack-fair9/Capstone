@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration - Needle</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            width: 600px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #4a6fa5;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #4a6fa5;
+            outline: none;
+        }
+
+        .profile-picture-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            margin-right: 20px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-picture-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-picture-preview i {
+            font-size: 30px;
+            color: #999;
+        }
+
+        .profile-picture-upload {
+            flex-grow: 1;
+        }
+
+        .profile-picture-upload input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4a6fa5;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: #3a5a80;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a6fa5;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3a5a80;
+        }
+
+        .secondary-btn {
+            background-color: #f0f0f0;
+            color: #4a6fa5;
+            margin-top: 10px;
+        }
+
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .two-columns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .two-columns .form-group {
+            flex: 1;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Registration</h1>
+        <div id="employeeMessage" class="message"></div>
+
+        <form id="employeeForm">
+            <div class="profile-picture-container">
+                <div class="profile-picture-preview" id="profilePreview">
+                    <i class="fas fa-user"></i>
+                    <img id="profileImage" style="display: none;">
+                </div>
+                <div class="profile-picture-upload">
+                    <label class="upload-btn">
+                        Upload Profile Picture
+                        <input type="file" id="profilePicture" accept="image/*">
+                    </label>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Max 2MB (JPG, PNG)</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="companyName">Company Name</label>
+                <input type="text" id="companyName" placeholder="Enter your company name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="companyEmail">Company Email</label>
+                <input type="email" id="companyEmail" placeholder="Enter your company email" required>
+            </div>
+
+            <div class="two-columns">
+                <div class="form-group">
+                    <label for="joiningDate">Joining Date</label>
+                    <input type="date" id="joiningDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department" required>
+                        <option value="">Select Department</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="HR">Human Resources</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Operations">Operations</option>
+                        <option value="IT">IT</option>
+                        <option value="Design">Design</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="position">Position</label>
+                <input type="text" id="position" placeholder="Enter your position" required>
+            </div>
+
+            <div class="form-group">
+                <label for="employeeEmail">Personal Email (Login)</label>
+                <input type="email" id="employeeEmail" placeholder="Enter your personal email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="employeePassword">Password</label>
+                <input type="password" id="employeePassword" placeholder="Create a password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+            </div>
+
+            <button type="button" onclick="registerEmployee()">Register</button>
+            <button type="button" class="secondary-btn" onclick="window.location.href='employeelogin.html'">Already have an account? Login</button>
+        </form>
+    </div>
+
+    <script>
+        // Profile picture preview
+        document.getElementById('profilePicture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showMessage('File size should be less than 2MB', true);
+                    e.target.value = ''; // Clear the file input
+                    return;
+                }
+
+                const validTypes = ['image/jpeg', 'image/png'];
+                if (!validTypes.includes(file.type)) {
+                    showMessage('Only JPG and PNG files are allowed', true);
+                    e.target.value = ''; // Clear the file input
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('profilePreview');
+                    const img = document.getElementById('profileImage');
+                    preview.querySelector('i').style.display = 'none';
+                    img.src = event.target.result;
+                    img.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Helper function to show messages
+        function showMessage(message, isError) {
+            const messageElement = document.getElementById('employeeMessage');
+            messageElement.textContent = message;
+            messageElement.className = isError ? 'message error' : 'message success';
+            messageElement.style.display = 'block';
+            
+            // Scroll to the message
+            messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async function registerEmployee() {
+            // Get form values
+            const companyName = document.getElementById('companyName').value;
+            const companyEmail = document.getElementById('companyEmail').value;
+            const joiningDate = document.getElementById('joiningDate').value;
+            const department = document.getElementById('department').value;
+            const position = document.getElementById('position').value;
+            const employeeEmail = document.getElementById('employeeEmail').value;
+            const password = document.getElementById('employeePassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const profilePicture = document.getElementById('profilePicture').files[0];
+
+            // Validation
+            if (!companyName || !companyEmail || !joiningDate || !department ||
+                !position || !employeeEmail || !password || !confirmPassword) {
+                showMessage('Please fill in all required fields', true);
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', true);
+                return;
+            }
+
+            if (password.length < 8) {
+                showMessage('Password must be at least 8 characters', true);
+                return;
+            }
+
+            // Create FormData for file upload
+            const formData = new FormData();
+            formData.append('companyName', companyName);
+            formData.append('companyEmail', companyEmail);
+            formData.append('joiningDate', joiningDate);
+            formData.append('department', department);
+            formData.append('position', position);
+            formData.append('email', employeeEmail);
+            formData.append('password', password);
+            if (profilePicture) {
+                formData.append('profilePicture', profilePicture);
+            }
+
+            try {
+                // Show loading state
+                showMessage('Registering employee...', false);
+
+                const response = await fetch('http://localhost:3000/register-employee', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Registration failed');
+                }
+
+                showMessage('Registration successful! Redirecting to login page...', false);
+
+                // Redirect to login page after successful registration
+                setTimeout(() => {
+                    window.location.href = 'employeelogin.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                showMessage(error.message || 'Registration failed. Please try again.', true);
+            }
+        }
+    </script>
+</body>
+</html>
