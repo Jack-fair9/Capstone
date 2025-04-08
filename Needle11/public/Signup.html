@@ -184,7 +184,7 @@
     <div class="navbar">
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="about.html">About Us</a>
+            <a href="aboutus.html">About Us</a>
             <a href="contact.html">Contact</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
@@ -229,27 +229,26 @@
     <script>
         document.getElementById('signupForm').addEventListener('submit', async (event) => {
             event.preventDefault();
-    
+
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
             const email = document.getElementById('email').value;
             const phoneNumber = document.getElementById('phoneNumber').value;
             const password = document.getElementById('password').value;
-    
+
             const errorMessage = document.getElementById('error-message');
             errorMessage.textContent = "";
-    
+
             try {
                 const response = await fetch('http://localhost:3000/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ firstName, lastName, email, phoneNumber, password }),
                 });
-    
+
                 const result = await response.json();
                 if (response.ok) {
                     alert(result.message);
-                    window.location.href = 'Login.html'; // Redirect to login page after signup
                 } else {
                     errorMessage.textContent = result.message;
                 }

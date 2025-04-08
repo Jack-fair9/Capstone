@@ -5,23 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Needel</title>
     <style>
-        /* Reset and Base Styles */
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
-    
-        body {
-            background: linear-gradient(to right, #ECE9E6, #FFFFFF);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #333;
-        }
-    
+
         /* Navigation Bar */
         .navbar {
             width: 100%;
@@ -31,31 +22,41 @@
             top: 0;
             left: 0;
             display: flex;
+            align-items: center;
             justify-content: center;
             z-index: 100;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-    
+
         .nav-links {
             display: flex;
             gap: 20px;
-            list-style: none;
         }
-    
+
         .nav-links a {
             color: white;
             text-decoration: none;
             font-size: 1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
-    
+
         .nav-links a:hover {
             text-decoration: underline;
-            opacity: 0.9;
         }
-    
-        /* Employer Login Button */
+
+        /* Background */
+        body {
+            background: linear-gradient(to right, #ECE9E6, #FFFFFF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        /* Employer Login */
         .employer-login {
             position: absolute;
             top: 15px;
@@ -67,68 +68,62 @@
             font-size: 0.9rem;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
-    
+
         .employer-login:hover {
             background: #372f6c;
-            transform: translateY(-1px);
         }
-    
-        /* Main Login Container */
+
+        /* Login Box */
         .login-container {
             width: 100%;
             max-width: 400px;
-            background: white;
+            background: #ffffff;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin: 100px auto 40px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
+            margin-top: 80px; /* To push down below navbar */
         }
-    
+
         /* Logo */
         .logo {
             width: 120px;
-            height: auto;
             margin-bottom: 20px;
-            object-fit: contain;
         }
-    
-        /* Headings */
+
+        /* Heading */
         h1 {
             font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 10px;
             color: #333;
+            margin-bottom: 10px;
         }
-    
-        p.subtext {
+
+        /* Subtext */
+        p {
             font-size: 1rem;
             color: #666;
-            margin-bottom: 25px;
-            line-height: 1.5;
+            margin-bottom: 20px;
         }
-    
-        /* Form Elements */
+
+        /* Form Fields */
         .input-field {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid #ddd;
             border-radius: 8px;
+            border: 1px solid #ddd;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            background-color: #f9f9f9;
+            transition: 0.3s;
         }
-    
+
         .input-field:focus {
             border-color: #4c3c92;
             outline: none;
-            box-shadow: 0 0 0 2px rgba(76, 60, 146, 0.2);
-            background-color: white;
         }
-    
+
         /* Login Button */
         .login-btn {
             width: 100%;
@@ -140,139 +135,69 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            transition: 0.3s;
         }
-    
+
         .login-btn:hover {
             background-color: #372f6c;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
         }
-    
-        .login-btn:active {
-            transform: translateY(0);
-        }
-    
-        /* Loading State */
-        .login-btn.loading {
-            position: relative;
-            pointer-events: none;
-        }
-    
-        .login-btn.loading::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-        }
-    
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    
-        /* Messages */
+
+        /* Error Message */
         .error-message {
-            color: #e74c3c;
+            color: red;
             font-size: 0.9rem;
-            margin: 10px 0;
-            min-height: 20px;
+            margin-top: 10px;
         }
-    
-        .success-message {
-            color: #27ae60;
-            font-size: 0.9rem;
-            margin: 10px 0;
-            min-height: 20px;
-        }
-    
+
         /* Links */
         .links {
-            margin-top: 20px;
+            margin-top: 15px;
             font-size: 0.9rem;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
         }
-    
+
         .links a {
             color: #4c3c92;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.2s ease;
         }
-    
+
         .links a:hover {
             text-decoration: underline;
-            color: #372f6c;
         }
-    
-        /* Responsive Design */
+
         @media (max-width: 768px) {
             .navbar {
-                padding: 12px 15px;
+                flex-direction: column;
+                padding: 10px;
+                text-align: center;
             }
-            
-            .nav-links {
-                gap: 15px;
-            }
-            
-            .employer-login {
-                position: relative;
-                top: auto;
-                right: auto;
-                display: block;
-                margin: 10px auto;
-                width: fit-content;
-            }
-            
-            .login-container {
-                padding: 30px 20px;
-                margin: 80px 20px 30px;
-            }
-            
-            .input-field {
-                padding: 10px 12px;
-            }
-        }
-    
-        @media (max-width: 480px) {
+
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: 10px 15px;
+                gap: 15px;
             }
-            
-            .links {
-                flex-direction: column;
-                gap: 8px;
-                align-items: center;
+
+            .login-container {
+                margin-top: 100px;
+                padding: 25px;
             }
-            
-            .links a {
-                display: block;
-                width: 100%;
-                text-align: center;
+
+            .input-field {
+                font-size: 0.9rem;
+                padding: 10px;
             }
         }
     </style>
-
 </head>
 <body>
 
-    <!-- Navigation Bar (unchanged) -->
+    <!-- Navigation Bar -->
     <div class="navbar">
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="about.html">About Us</a>
+            <a href="aboutus.html">About Us</a>
             <a href="contact.html">Contact</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
@@ -289,7 +214,7 @@
         <h1>Welcome Back</h1>
         <p>Login to access your account</p>
 
-        <form id="loginForm">
+        <form onsubmit="return loginUser(event)">
             <input type="email" id="email" class="input-field" placeholder="Email" required>
             <input type="password" id="password" class="input-field" placeholder="Password" required>
 
@@ -305,45 +230,34 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        async function loginUser(event) {
             event.preventDefault();
-            
+
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
-            const errorElement = document.getElementById('error-message');
-            
-            errorElement.textContent = '';
-            
+            const errorMessage = document.getElementById('error-message');
+
+            errorMessage.textContent = ""; // Clear previous messages
+
             try {
                 const response = await fetch('http://localhost:3000/login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.message || 'Login failed');
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert("Login successful!"); // Show a success message
+                    window.location.href = 'home.html'; // Redirect to home page
+                } else {
+                    errorMessage.textContent = result.message || "Invalid email or password.";
                 }
-                
-                // Login successful - handle redirect or user data
-                alert('Login successful!');
-                console.log('User data:', data.user);
-                
-                // Store user data in localStorage if needed
-                localStorage.setItem('user', JSON.stringify(data.user));
-                
-                // Redirect to home page or dashboard
-                window.location.href = 'home.html';
-                
             } catch (error) {
-                errorElement.textContent = error.message;
-                console.error('Login error:', error);
+                console.error('Error during login:', error);
+                errorMessage.textContent = "Something went wrong. Please try again later.";
             }
-        });
+        }
     </script>
 
 </body>

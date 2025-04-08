@@ -9,7 +9,8 @@ const crypto = require('crypto');
 const multer = require('multer');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 
 // Middleware
 app.use(cors());
@@ -17,12 +18,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Root Route
+app.get('/', (req, res) => {
+    res.send('Hello from Azure!');
+});
+
 // Multer configuration for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// MongoDB Connection
-const mongoURI = "mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
+const mongoURI = process.env.MONGO_CONNECTION_STRING || "mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('Failed to connect to MongoDB:', err));
@@ -59,8 +64,11 @@ const employerCredentialsSchema = new mongoose.Schema({
 }, { collection: 'employeracc' });
 const EmployerCredentials = mongoose.model('EmployerCredentials', employerCredentialsSchema);
 
-// Employee Schema
+// Updated Employee Schema
 const employeeSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    phoneNumber: String,
     companyName: String,
     companyEmail: String,
     joiningDate: Date,
@@ -68,6 +76,8 @@ const employeeSchema = new mongoose.Schema({
     position: String,
     email: { type: String, unique: true },
     password: String,
+    emoji: { type: String, default: '👤' },
+    status: { type: String, default: 'active' },
     profilePicture: {
         data: Buffer,
         contentType: String
@@ -76,6 +86,151 @@ const employeeSchema = new mongoose.Schema({
     resetPasswordExpires: Date
 });
 const Employee = mongoose.model('Employee', employeeSchema);
+
+// Updated Employee Login Endpoint
+app.post('/api/employees/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Email and password are required'
+            });
+        }
+
+        const employee = await Employee.findOne({ email: email.toLowerCase() });
+        
+        if (!employee) {
+            return res.status(401).json({ 
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        if (employee.password !== password) {
+            return res.status(401).json({ 
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        // Prepare employee data for response
+        const employeeData = {
+            _id: employee._id,
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            fullName: `${employee.firstName} ${employee.lastName}`,
+            phoneNumber: employee.phoneNumber,
+            companyName: employee.companyName,
+            companyEmail: employee.companyEmail,
+            joiningDate: employee.joiningDate,
+            department: employee.department,
+            position: employee.position,
+            email: employee.email,
+            emoji: employee.emoji,
+            status: employee.status
+        };
+
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            token: 'dummy-token-for-now', // Replace with real token in production
+            employee: employeeData
+        });
+
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ 
+            success: false,
+            message: 'Login failed', 
+            error: err.message 
+        });
+    }
+});
+
+// Enhanced Get Employee Endpoint
+app.get('/api/employees/:id', async (req, res) => {
+    try {
+        const employee = await Employee.findById(req.params.id)
+            .select('-password -resetPasswordToken -resetPasswordExpires');
+        
+        if (!employee) {
+            return res.status(404).json({
+                success: false,
+                message: 'Employee not found'
+            });
+        }
+
+        const employeeData = {
+            _id: employee._id,
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            fullName: `${employee.firstName} ${employee.lastName}`,
+            phoneNumber: employee.phoneNumber,
+            companyName: employee.companyName,
+            companyEmail: employee.companyEmail,
+            joiningDate: employee.joiningDate,
+            department: employee.department,
+            position: employee.position,
+            email: employee.email,
+            emoji: employee.emoji,
+            status: employee.status
+        };
+
+        res.status(200).json({
+            success: true,
+            employee: employeeData
+        });
+    } catch (err) {
+        console.error('Error fetching employee:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch employee',
+            error: err.message
+        });
+    }
+});
+
+// Update Employee Emoji Endpoint
+app.put('/api/employees/:id/emoji', async (req, res) => {
+    try {
+        const { emoji } = req.body;
+
+        if (!emoji) {
+            return res.status(400).json({
+                success: false,
+                message: 'Emoji is required'
+            });
+        }
+
+        const employee = await Employee.findByIdAndUpdate(
+            req.params.id,
+            { emoji },
+            { new: true }
+        ).select('-password');
+
+        if (!employee) {
+            return res.status(404).json({
+                success: false,
+                message: 'Employee not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Emoji updated successfully',
+            emoji: employee.emoji
+        });
+    } catch (err) {
+        console.error('Error updating emoji:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update emoji',
+            error: err.message
+        });
+    }
+});
 
 // Job Posting Schema
 const jobPostingSchema = new mongoose.Schema({
@@ -206,6 +361,195 @@ app.post('/employer-signup', async (req, res) => {
     }
 });
 
+// Employee Registration Endpoint
+// Updated Employee Registration Endpoint
+app.post('/register-employee', async (req, res) => {
+    const {
+        firstName,
+        lastName,
+        phoneNumber,
+        companyName,
+        companyEmail,
+        joiningDate,
+        department,
+        position,
+        email,
+        password,
+        emoji
+    } = req.body;
+
+    try {
+        // Check if employee already exists
+        const existingEmployee = await Employee.findOne({ 
+            $or: [
+                { email: email.toLowerCase() },
+                { companyEmail: companyEmail.toLowerCase() }
+            ]
+        });
+        
+        if (existingEmployee) {
+            return res.status(400).json({
+                success: false,
+                message: 'Employee with this email already exists'
+            });
+        }
+
+        // Create new employee
+        const newEmployee = new Employee({
+            firstName,
+            lastName,
+            fullName: `${firstName} ${lastName}`,
+            phoneNumber,
+            companyName,
+            companyEmail,
+            joiningDate: new Date(joiningDate),
+            department,
+            position,
+            email: email.toLowerCase(),
+            password, // Note: In production, hash this password
+            emoji: emoji || '👤',
+            status: 'active'
+        });
+
+        await newEmployee.save();
+
+        // Return the complete employee data including _id
+        const employeeResponse = {
+            _id: newEmployee._id,
+            firstName: newEmployee.firstName,
+            lastName: newEmployee.lastName,
+            fullName: newEmployee.fullName,
+            phoneNumber: newEmployee.phoneNumber,
+            companyName: newEmployee.companyName,
+            companyEmail: newEmployee.companyEmail,
+            joiningDate: newEmployee.joiningDate,
+            department: newEmployee.department,
+            position: newEmployee.position,
+            email: newEmployee.email,
+            emoji: newEmployee.emoji,
+            status: newEmployee.status
+        };
+
+        res.status(201).json({
+            success: true,
+            message: 'Employee registered successfully',
+            employee: employeeResponse,
+            redirectUrl: '/employeelogin.html'
+        });
+
+    } catch (err) {
+        console.error('Registration error:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to register employee',
+            error: err.message
+        });
+    }
+});
+
+// Employee Login - Updated and Fixed
+app.post('/api/employees/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Email and password are required'
+            });
+        }
+
+        const employee = await Employee.findOne({ email: email.toLowerCase() });
+        
+        if (!employee) {
+            return res.status(401).json({ 
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        if (employee.password !== password) {
+            return res.status(401).json({ 
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        // Safely handle profile picture data
+        let profilePicture = null;
+        if (employee.profilePicture && employee.profilePicture.data) {
+            profilePicture = {
+                data: employee.profilePicture.data.toString('base64'),
+                contentType: employee.profilePicture.contentType
+            };
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            token: crypto.randomBytes(32).toString('hex'),
+            employee: {
+                id: employee._id,
+                email: employee.email,
+                companyName: employee.companyName,
+                companyEmail: employee.companyEmail,
+                joiningDate: employee.joiningDate,
+                department: employee.department,
+                position: employee.position,
+                profilePicture: profilePicture
+            }
+        });
+
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ 
+            success: false,
+            message: 'Login failed', 
+            error: err.message 
+        });
+    }
+});
+
+// Get Employee Profile
+app.get('/api/employees/:id', async (req, res) => {
+    try {
+        const employee = await Employee.findById(req.params.id)
+            .select('-password -resetPasswordToken -resetPasswordExpires');
+        
+        if (!employee) {
+            return res.status(404).json({
+                success: false,
+                message: 'Employee not found'
+            });
+        }
+
+        const employeeData = {
+            id: employee._id,
+            companyName: employee.companyName,
+            companyEmail: employee.companyEmail,
+            joiningDate: employee.joiningDate,
+            department: employee.department,
+            position: employee.position,
+            email: employee.email,
+            profilePicture: employee.profilePicture ? {
+                data: employee.profilePicture.data.toString('base64'),
+                contentType: employee.profilePicture.contentType
+            } : null
+        };
+
+        res.status(200).json({
+            success: true,
+            employee: employeeData
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch employee',
+            error: err.message
+        });
+    }
+});
+
 // Code Verification Endpoint
 app.post('/verify-code', async (req, res) => {
     const { email, authCode } = req.body;
@@ -257,324 +601,7 @@ app.post('/employer-login', async (req, res) => {
     }
 });
 
-// Employee Registration Endpoint - Updated for better connection with login
-app.post('/register-employee', upload.single('profilePicture'), async (req, res) => {
-    const { companyName, companyEmail, joiningDate, department, position, email, password } = req.body;
-
-    if (!companyName || !companyEmail || !joiningDate || !department || !position || !email || !password) {
-        return res.status(400).json({ 
-            success: false,
-            message: 'All fields are required!' 
-        });
-    }
-
-    try {
-        if (await Employee.findOne({ email: email.toLowerCase() })) {
-            return res.status(400).json({ 
-                success: false,
-                message: 'Email is already registered.' 
-            });
-        }
-
-        const newEmployee = new Employee({
-            companyName,
-            companyEmail,
-            joiningDate,
-            department,
-            position,
-            email: email.toLowerCase(),
-            password,
-            profilePicture: req.file ? {
-                data: req.file.buffer,
-                contentType: req.file.mimetype
-            } : null
-        });
-
-        await newEmployee.save();
-
-        // Send confirmation email
-        const mailContent = `
-            Your employee account has been successfully created with Needle.
-
-            Company Name: ${companyName}
-            Company Email: ${companyEmail}
-            Position: ${position}
-            Department: ${department}
-
-            You can now log in using your personal email and password.
-
-            Best regards,
-            The Needle Team
-        `;
-
-        await sendEmail(email, 'Employee Account Created - Needle', mailContent);
-
-        res.status(201).json({
-            success: true,
-            message: 'Employee registered successfully!',
-            redirectUrl: '/employee-login.html',
-            email: email // Pass email to pre-fill login form
-        });
-    } catch (err) {
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to register employee.', 
-            error: err.message 
-        });
-    }
-});
-
-// Updated Employee Login Endpoint
-app.post('/api/employees/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ 
-            success: false,
-            message: 'Email and password are required!' 
-        });
-    }
-
-    try {
-        const employee = await Employee.findOne({ email: email.toLowerCase() });
-
-        if (!employee) {
-            return res.status(401).json({ 
-                success: false,
-                message: 'Invalid email or password.' 
-            });
-        }
-
-        if (employee.password !== password) {
-            return res.status(401).json({ 
-                success: false,
-                message: 'Invalid email or password.' 
-            });
-        }
-
-        // Create a simple token (in production, use JWT)
-        const token = crypto.randomBytes(16).toString('hex');
-
-        res.status(200).json({
-            success: true,
-            message: 'Login successful!',
-            token: token,
-            employee: {
-                email: employee.email,
-                companyName: employee.companyName,
-                position: employee.position,
-                department: employee.department
-            }
-        });
-    } catch (err) {
-        res.status(500).json({ 
-            success: false,
-            message: 'Something went wrong.', 
-            error: err.message 
-        });
-    }
-});
-
-// Employee Profile Endpoint
-app.get('/employee-profile', async (req, res) => {
-    const { email } = req.query;
-
-    if (!email) {
-        return res.status(400).json({
-            success: false,
-            message: 'Email is required'
-        });
-    }
-
-    try {
-        const employee = await Employee.findOne({ email: email.toLowerCase() });
-
-        if (!employee) {
-            return res.status(404).json({
-                success: false,
-                message: 'Employee not found'
-            });
-        }
-
-        // Prepare the response data
-        const employeeData = {
-            email: employee.email,
-            companyName: employee.companyName,
-            companyEmail: employee.companyEmail,
-            joiningDate: employee.joiningDate,
-            department: employee.department,
-            position: employee.position,
-            profilePicture: employee.profilePicture ? {
-                data: employee.profilePicture.data.toString('base64'),
-                contentType: employee.profilePicture.contentType
-            } : null
-        };
-
-        res.status(200).json({
-            success: true,
-            employee: employeeData
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message
-        });
-    }
-});
-
-// Get all job postings
-app.get('/job-postings', async (req, res) => {
-    try {
-        const postings = await JobPosting.find().select('-applicants');
-        res.status(200).json({
-            success: true,
-            postings
-        });
-    } catch (err) {
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to fetch job postings', 
-            error: err.message 
-        });
-    }
-});
-
-// Apply for a job
-app.post('/apply-job', async (req, res) => {
-    const { jobId, employeeEmail } = req.body;
-
-    if (!jobId || !employeeEmail) {
-        return res.status(400).json({ 
-            success: false,
-            message: 'Job ID and employee email are required' 
-        });
-    }
-
-    try {
-        // Find the employee
-        const employee = await Employee.findOne({ email: employeeEmail.toLowerCase() });
-        if (!employee) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'Employee not found' 
-            });
-        }
-
-        // Find the job posting
-        const job = await JobPosting.findById(jobId);
-        if (!job) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'Job posting not found' 
-            });
-        }
-
-        // Check if already applied
-        if (job.applicants.some(appliedId => appliedId.equals(employee._id))) {
-            return res.status(400).json({ 
-                success: false,
-                message: 'You have already applied for this job' 
-            });
-        }
-
-        // Add applicant
-        job.applicants.push(employee._id);
-        await job.save();
-
-        res.status(200).json({ 
-            success: true,
-            message: 'Application submitted successfully!' 
-        });
-    } catch (err) {
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to apply for job', 
-            error: err.message 
-        });
-    }
-});
-
-// Get employee's applied jobs
-app.get('/applied-jobs', async (req, res) => {
-    const { email } = req.query;
-
-    if (!email) {
-        return res.status(400).json({ 
-            success: false,
-            message: 'Employee email is required' 
-        });
-    }
-
-    try {
-        const employee = await Employee.findOne({ email: email.toLowerCase() });
-        if (!employee) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'Employee not found' 
-            });
-        }
-
-        const appliedJobs = await JobPosting.find({ applicants: employee._id })
-            .select('title description department company createdAt');
-
-        res.status(200).json({ 
-            success: true,
-            appliedJobs 
-        });
-    } catch (err) {
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to fetch applied jobs', 
-            error: err.message 
-        });
-    }
-});
-
-// Create a new job posting (for employers)
-app.post('/create-job', async (req, res) => {
-    const { title, description, department, company, employerEmail } = req.body;
-
-    if (!title || !description || !department || !company || !employerEmail) {
-        return res.status(400).json({ 
-            success: false,
-            message: 'All fields are required' 
-        });
-    }
-
-    try {
-        const employer = await EmployerCredentials.findOne({ email: employerEmail.toLowerCase() });
-        if (!employer) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'Employer not found' 
-            });
-        }
-
-        const newJob = new JobPosting({
-            title,
-            description,
-            department,
-            company,
-            postedBy: employer._id
-        });
-
-        await newJob.save();
-
-        res.status(201).json({
-            success: true,
-            message: 'Job posting created successfully',
-            job: newJob
-        });
-    } catch (err) {
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to create job posting', 
-            error: err.message 
-        });
-    }
-});
-
-// Generate and send OTP for password reset
+// Forgot Password - Generate and send OTP
 app.post('/forgot-password', async (req, res) => {
     const { email, userType } = req.body;
 
@@ -686,7 +713,7 @@ app.post('/verify-reset-otp', async (req, res) => {
             });
         }
 
-        // OTP is valid - generate a reset token (for the frontend to use)
+        // OTP is valid - generate a reset token
         const resetToken = crypto.randomBytes(20).toString('hex');
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // Token valid for 15 minutes
@@ -772,46 +799,6 @@ app.post('/reset-password', async (req, res) => {
         });
     }
 });
-// In your server.js
-app.get('/api/employees/:id', async (req, res) => {
-    try {
-        const employee = await Employee.findById(req.params.id)
-            .select('-password -resetPasswordToken -resetPasswordExpires');
-        
-        if (!employee) {
-            return res.status(404).json({
-                success: false,
-                message: 'Employee not found'
-            });
-        }
-
-        // Format the employee data including profile picture
-        const employeeData = {
-            id: employee._id,
-            companyName: employee.companyName,
-            companyEmail: employee.companyEmail,
-            joiningDate: employee.joiningDate,
-            department: employee.department,
-            position: employee.position,
-            email: employee.email,
-            profilePicture: employee.profilePicture ? {
-                data: employee.profilePicture.data.toString('base64'),
-                contentType: employee.profilePicture.contentType
-            } : null
-        };
-
-        res.status(200).json({
-            success: true,
-            employee: employeeData
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch employee',
-            error: err.message
-        });
-    }
-});
 
 // Serve HTML Files
 app.get('/:filename', (req, res) => {
@@ -824,4 +811,7 @@ app.get('/:filename', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
