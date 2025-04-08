@@ -25,6 +25,7 @@ jobs:
         run: |
           cd Needle11 # Ensure the directory is correct
           npm install mongodb
+          npm install mongoose@latest
           npm install
           npm run build --if-present
           npm run test --if-present
