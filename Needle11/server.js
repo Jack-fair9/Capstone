@@ -12,32 +12,74 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
+// MongoDB Connection
+const mongoURI = "mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
+ 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Root Route
-app.get('/', (req, res) => {
-    res.send('Hello from Azure!');
-});
-
-// Multer configuration for file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-const mongoURI = process.env.MONGO_CONNECTION_STRING || "mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB Atlas'))
-    .catch(err => console.error('Failed to connect to MongoDB:', err));
-
-const conn = mongoose.connection;
+ 
+// Initialize GridFS storage
 let gfs;
+const conn = mongoose.connection;
 conn.once('open', () => {
     gfs = new GridFSBucket(conn.db, { bucketName: 'uploads' });
     console.log('GridFS initialized');
 });
+ 
+// Multer configuration for file uploads
+const storage = new GridFsStorage({
+    url: mongoURI,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'uploads',
+                    metadata: {
+                        originalName: file.originalname,
+                        uploadDate: new Date(),
+                        applicantEmail: req.body.email,
+                        fileType: file.fieldname
+                    }
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+ 
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only PDF, DOC, and DOCX files are allowed.'));
+        }
+    }
+});
+ 
+// Connect to MongoDB
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB Atlas'))
+    .catch(err => console.error('Failed to connect to MongoDB:', err));
+
+
 
 // User Schema
 const userSchema = new mongoose.Schema({
