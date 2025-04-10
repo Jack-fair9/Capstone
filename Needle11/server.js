@@ -204,13 +204,20 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Email and password are required' });
     }
     try {
+        console.log('Attempting login for email:', email);
+ 
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
+            console.log('User not found for email:', email);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+ 
         if (user.password !== password) {
+            console.log('Password mismatch for user:', email);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+ 
+        console.log('Login successful for user:', email);
         res.status(200).json({
             message: 'Login successful',
             user: {
@@ -221,7 +228,8 @@ app.post('/login', async (req, res) => {
             }
         });
     } catch (err) {
-        res.status(500).json({ message: 'Login failed', error: err.message });
+        console.error('Login failed for user:', email, 'Error:', err.message);
+        res.status(500).json({ message: 'Something went wrong. Please try again later.', error: err.message });
     }
 });
 
