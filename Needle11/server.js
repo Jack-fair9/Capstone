@@ -8,12 +8,13 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 433;
+const PORT = process.env.PORT || 3000;
 
 // Hardcoded MongoDB URI and email credentials
-const mongoURI = "mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
+const mongoURI = process.env.MONGO_CONNECTION_STRING ||"mongodb+srv://arshdeepkhurana3:Arshdeep00%40@needle.j6dcl.mongodb.net/Needle?retryWrites=true&w=majority";
 const emailUser = "Needle.info1@gmail.com";
 const emailPass = "lqdv rhgm kiag vppz";
 
