@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup | Needel</title>
+    <title>Untitled</title><link rel="stylesheet" href="./signup.css">
+    <nav class="navbar z-50 sticky top-0 bg-[rgb(238,238,238)]" id="navbar">
+        <div class="container">
+            <a class="navbar-brand text-secondary" href="/">
+                <img class="h-6" alt="company logo" src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" width="134" height="27" />
+            </a>
+            <button class="navbar-btn" data-toggle="collapse" data-target="#navbar-row" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Open navbar menu</span>
+                <span class="block h-1 rounded-full bg-secondary"></span>
+                <span class="block h-1 mt-1 rounded-full bg-secondary"></span>
+                <span class="block h-1 mt-1 rounded-full bg-secondary"></span>
+            </button>
+            <div class="navbar-row" id="navbar-row">
+                <ul class="navbar-col"></ul>
+                <ul class="navbar-col"></ul>
+                <ul class="navbar-col">
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)] font-[roboto] bg-light" href="index.html">
+                            <b>Home</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)] font-[roboto]" href="career.html">
+                            <b>Careers</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)]" href="aboutus.html">
+                            <b class="font-[roboto]">AboutUs</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)]" href="contact.html">
+                            <b class="font-[roboto]">Contact us</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="btn btn-secondary btn-lg nav-link text-[rgb(238,238,238)] bg-[rgb(40,33,56)] hover:text-white hover:bg-primary" href="login.html">Log In/My Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <style>
+
+        /* Signup Box */
+        .signup-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 100px auto 40px;
+            text-align: center;
+        }
+
+        .signup-container img {
+            display: block;
+            margin: 0 auto 20px; 
+        }
+        
+        input {
+            width: 100%;
+            padding: 9px;
+            margin-top: 4px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 0.9rem;
+        }
+
+
+        /* Signup Button */
+        .button-class {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background-color: rgb(40, 33, 56);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .button-class:hover {
+            background-color: rgb(40, 33, 56);
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            input {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    </div>
+    
+    <div class="signup-container">
+    
+        <img class="h-6" alt="company logo" src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" width="134" height="27" />
+        <h4>The Signup is free. This takes only a few minutes.<br> Make your job search easier.</h4>
+        
+        <form id="signupForm" class="form-container">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <p class="error-message" id="error-message"></p>
+            <button class="button-class" type="submit">Create Account</button>
+            <a href="Login.html">Already have an account? Sign in</a>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const password = document.getElementById('password').value;
+
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = "";
+
+            try {
+                const response = await fetch('http://localhost:3000/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ firstName, lastName, email, phoneNumber, password }),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                } else {
+                    errorMessage.textContent = result.message;
+                }
+            } catch (error) {
+                errorMessage.textContent = "Something went wrong. Please try again later.";
+                console.error(error);
+            }
+        });
+    </script>
+    <footer class="relative pt-16 pb-16 overflow-clip bg-[rgb(238,238,238)] lg:pb-8" id="footer">
+        <div class="container">
+            <div class="row mb-12 gap-y-8">
+                <div class="col lg:w-[40%] text-left">
+                    <a class="navbar-brand text-white mb-5 md:mb-6 lg:mb-8" href="/">
+                        <img src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" />
+                    </a>
+                    <div class="mb-5 md:mb-6 lg:mb-8"></div>
+                </div>
+                <div class="col lg:w-[30%]">
+                    <div class="row">
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Company</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">About Us</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Careers</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Blog</a>
+                        </div>
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Contact</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">+123 456-7890</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">info@fin.sweet</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col lg:w-[30%] md:mb-0 flex flex-col gap-y-2">
+                    <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto] bg-[rgb(238,238,238)]">Stay Updated</p>
+                    <form>
+                        <div class="row gap-y-3">
+                            <div class="col">
+                                <input class="form-input bg-[rgb(248,248,255)]" type="email" name="email" placeholder="Type email here" required="" />
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-primary btn-lg text-[rgb(238,238,238)] bg-[rgb(40,33,56)]" type="submit">Subscribe</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

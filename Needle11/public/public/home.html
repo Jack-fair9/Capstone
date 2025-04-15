@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Listings | Needel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #d3c0eb, #f4e9ff);
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #4c3c92;
+      padding: 10px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+      text-align: center;
+    }
+
+    .navbar a {
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    .navbar a:hover {
+      background-color: #6c5b8b;
+    }
+
+    h1 {
+      margin-top: 120px;
+      text-align: center;
+      color: #4c3c92;
+    }
+
+    .job-card {
+      background: white;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .job-card h2 {
+      color: #4c3c92;
+    }
+
+    .job-card p {
+      margin: 5px 0;
+    }
+
+    .job-card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #4c3c92;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .job-card a:hover {
+      background: #372f6c;
+    }
+
+    .job-status {
+      font-weight: bold;
+      color: #4c3c92;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="post_job.html">Post Job</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <h1>Available Jobs</h1>
+  <div id="jobList"></div>
+
+  <script>
+    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    const container = document.getElementById("jobList");
+
+    if (jobs.length === 0) {
+      container.innerHTML = "<p style='text-align:center;'>No jobs posted yet.</p>";
+    } else {
+      jobs.forEach((job, index) => {
+        const link = `apply.html?jobId=${index}&title=${encodeURIComponent(job.position)}&company=${encodeURIComponent(job.company)}&location=${encodeURIComponent(job.location)}&field=${encodeURIComponent(job.field)}&status=${job.status}&description=${encodeURIComponent(job.description)}`;
+        container.innerHTML += `
+          <div class="job-card">
+            <h2>${job.position}</h2>
+            <p><strong>Company:</strong> ${job.company}</p>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p><strong>Field:</strong> ${job.field}</p>
+            <p class="job-status"><strong>Status:</strong> ${job.status}</p>
+            <a href="${link}">Apply Now</a>
+          </div>
+        `;
+      });
+    }
+  </script>
+
+</body>
+</html>

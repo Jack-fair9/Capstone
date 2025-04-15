@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application</title><link rel="stylesheet" href="./apply.css">
+    <nav class="navbar z-50 sticky top-0 bg-[rgb(238,238,238)]" id="navbar">
+        <div class="container">
+            <a class="navbar-brand text-secondary" href="/">
+                <img class="h-6" alt="company logo" src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" width="134" height="27" />
+            </a>
+            <button class="navbar-btn" data-toggle="collapse" data-target="#navbar-row" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Open navbar menu</span>
+                <span class="block h-1 rounded-full bg-secondary"></span>
+                <span class="block h-1 mt-1 rounded-full bg-secondary"></span>
+                <span class="block h-1 mt-1 rounded-full bg-secondary"></span>
+            </button>
+            <div class="navbar-row" id="navbar-row">
+                <ul class="navbar-col"></ul>
+                <ul class="navbar-col"></ul>
+                <ul class="navbar-col">
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)] font-[roboto] bg-light" href="index.html">
+                            <b>Home</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)] font-[roboto]" href="career.html">
+                            <b>Careers</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)]" href="aboutus.html">
+                            <b class="font-[roboto]">AboutUs</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)]" href="contact.html">
+                            <b class="font-[roboto]">Contact us</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="btn btn-secondary btn-lg nav-link text-[rgb(238,238,238)] bg-[rgb(40,33,56)] hover:text-white hover:bg-primary" href="login.html">Log In/My Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .navbar {
+            top: 0;
+            z-index: 1000; /* Ensures the navbar is above other elements */
+            background-color: rgb(238, 238, 238); 
+            width: 100%; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .file-upload {
+            margin-bottom: 15px;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 10px 10px; 
+            background: rgb(40, 33, 56);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .file-upload input[type="file"] {
+            display: none; 
+        }
+        .file-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        button#submit {
+            background: rgb(40, 33, 56);
+            color: white;
+            border: none;
+            padding: 10px 10px; 
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button#submit:hover {
+            background: rgb(55, 45, 70); 
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+
+        footer {
+            background-color: rgb(238, 238, 238);
+            padding: 16px;
+            width: 100%;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); 
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Job Application</h1>
+        
+        <form id="applicationForm">
+            <input type="hidden" id="jobDetails" name="jobDetails">
+            
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="referral">How did you hear about this position?</label>
+                <input type="text" id="referral" name="referral">
+            </div>
+            
+            <div class="form-group">
+                <div class="file-upload">
+                    <label for="resume">Upload Resume (PDF/DOC/DOCX)</label>
+                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+                    <div class="file-name" id="resume-name">No file selected</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="file-upload">
+                    <label for="coverletter">Upload Cover Letter (Optional)</label>
+                    <input type="file" id="coverletter" name="coverletter" accept=".pdf,.doc,.docx">
+                    <div class="file-name" id="coverletter-name">No file selected</div>
+                </div>
+            </div>
+            
+            <div id="loading">
+                <p>Uploading, please wait...</p>
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="status"></div>
+            
+            <button type="submit" id="submit">Submit Application</button>
+        </form>
+    </div>
+
+    <script>
+        // Set job details (this would normally come from the job listing page)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Example job details - in a real app, these would come from your database
+            const jobDetails = {
+                jobId: '12345',
+                title: 'Software Developer',
+                field: 'Technology',
+                location: 'Remote',
+                company: 'Tech Corp',
+                description: 'Looking for an experienced software developer...'
+            };
+            
+            document.getElementById('jobDetails').value = JSON.stringify(jobDetails);
+            
+            // File input handlers
+            document.getElementById('resume').addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+                document.getElementById('resume-name').textContent = fileName;
+            });
+            
+            document.getElementById('coverletter').addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+                document.getElementById('coverletter-name').textContent = fileName;
+            });
+            
+            // Form submission
+            document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const form = e.target;
+                const formData = new FormData(form);
+                const loading = document.getElementById('loading');
+                const status = document.getElementById('status');
+                
+                // Show loading indicator
+                loading.style.display = 'block';
+                status.style.display = 'none';
+                
+                try {
+                    const response = await fetch('/api/apply', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        status.className = 'success';
+                        status.innerHTML = `
+                            <h3>Application Submitted Successfully!</h3>
+                            <p>Thank you for your application. We've sent a confirmation to your email.</p>
+                            <p>Your application ID: ${data.applicationId}</p>
+                        `;
+                        
+                        // Reset form
+                        form.reset();
+                        document.getElementById('resume-name').textContent = 'No file selected';
+                        document.getElementById('coverletter-name').textContent = 'No file selected';
+                    } else {
+                        status.className = 'error';
+                        status.textContent = `Error: ${data.message}`;
+                    }
+                } catch (error) {
+                    console.error('Error submitting application:', error);
+                    status.className = 'error';
+                    status.textContent = 'Failed to submit application. Please try again.';
+                } finally {
+                    loading.style.display = 'none';
+                    status.style.display = 'block';
+                }
+            });
+        });
+    </script>
+    <footer class="relative pt-16 pb-16 overflow-clip bg-[rgb(238,238,238)] lg:pb-8" id="footer">
+        <div class="container">
+            <div class="row mb-12 gap-y-8">
+                <div class="col lg:w-[40%] text-left">
+                    <a class="navbar-brand text-white mb-5 md:mb-6 lg:mb-8" href="/">
+                        <img src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" />
+                    </a>
+                    <div class="mb-5 md:mb-6 lg:mb-8"></div>
+                </div>
+                <div class="col lg:w-[30%]">
+                    <div class="row">
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Company</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">About Us</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Careers</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Blog</a>
+                        </div>
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Contact</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">+123 456-7890</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">info@fin.sweet</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col lg:w-[30%] md:mb-0 flex flex-col gap-y-2">
+                    <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto] bg-[rgb(238,238,238)]">Stay Updated</p>
+                    <form>
+                        <div class="row gap-y-3">
+                            <div class="col">
+                                <input class="form-input bg-[rgb(248,248,255)]" type="email" name="email" placeholder="Type email here" required="" />
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-primary btn-lg text-[rgb(238,238,238)] bg-[rgb(40,33,56)]" type="submit">Subscribe</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

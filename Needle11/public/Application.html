@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Applications | Needle</title><link rel="stylesheet" href="./aboutus.css">
+    <nav class="navbar z-50 sticky top-0 bg-[rgb(238,238,238)]" id="navbar">
+        <div class="container">
+            <a class="navbar-brand text-secondary" href="/">
+                <img class="h-6" alt="company logo" src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" width="134" height="27" />
+            </a>
+            <button class="navbar-btn" data-toggle="collapse" data-target="#navbar-row" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Open navbar menu</span>
+                <span class="block h-1 rounded-full bg-secondary"></span>
+                <span class="block h-1 mt-1 rounded-full bg-secondary"></span>
+                <span class="block h-1 mt-1 rounded-full bg-secondary"></span>
+            </button>
+            <div class="navbar-row" id="navbar-row">
+                <ul class="navbar-col"></ul>
+                <ul class="navbar-col"></ul>
+                <ul class="navbar-col">
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)] font-[roboto] bg-light" href="index.html">
+                            <b>Home</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)] font-[roboto]" href="career.html">
+                            <b>Careers</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)]" href="aboutus.html">
+                            <b class="font-[roboto]">AboutUs</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link text-[rgb(51,49,46)]" href="contact.html">
+                            <b class="font-[roboto]">Contact us</b>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="btn btn-secondary btn-lg nav-link text-[rgb(238,238,238)] bg-[rgb(40,33,56)] hover:text-white hover:bg-primary" href="login.html">Log In/My Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: black;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            flex-shrink: 0; /* Ensure the navbar stays at the top */
+        }
+
+
+        h1 {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            color: #4c3c92;
+            font-size: 2.5rem;
+            margin-top: 120px;
+        }
+
+        .applications-list {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            margin-bottom: 500px;
+        }
+
+        .application-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .application-item:last-child {
+            border-bottom: none;
+        }
+
+        .application-title {
+            font-size: 1.5rem;
+            color: #4c3c92;
+        }
+
+        .application-details {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .job-details {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #4c3c92;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Submitted Applications</h1>
+
+    <div class="applications-list" id="applicationsList">
+        <!-- Application listings will be injected here -->
+    </div>
+
+    <script>
+        async function fetchApplications() {
+            try {
+                const response = await fetch('/api/applications');
+                const data = await response.json();
+
+                if (data.success) {
+                    displayApplications(data.applications);
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+                document.getElementById("applicationsList").innerHTML = "<p>Failed to load applications.</p>";
+            }
+        }
+
+        function displayApplications(applications) {
+            const applicationsList = document.getElementById("applicationsList");
+            applicationsList.innerHTML = ""; // Clear any existing content
+
+            if (applications.length === 0) {
+                applicationsList.innerHTML = "<p>No applications submitted.</p>";
+                return;
+            }
+
+            applications.forEach((application, index) => {
+                const applicationItem = document.createElement("div");
+                applicationItem.classList.add("application-item");
+
+                const applicationTitle = document.createElement("div");
+                applicationTitle.classList.add("application-title");
+                applicationTitle.textContent = `Application ${index + 1}`;
+
+                const applicationDetails = document.createElement("div");
+                applicationDetails.classList.add("application-details");
+                applicationDetails.innerHTML = `
+                    <strong>Name:</strong> ${application.name}<br>
+                    <strong>Email:</strong> ${application.email}<br>
+                    <strong>Resume:</strong> ${application.resume}<br>
+                    <strong>Cover Letter:</strong> ${application.coverletter}<br>
+                    <strong>Referral:</strong> ${application.referral}
+                `;
+
+                const jobDetails = document.createElement("div");
+                jobDetails.classList.add("job-details");
+                jobDetails.innerHTML = `
+                    <strong>Job Position:</strong> ${application.jobDetails.position}<br>
+                    <strong>Field:</strong> ${application.jobDetails.field}<br>
+                    <strong>Location:</strong> ${application.jobDetails.location}<br>
+                    <strong>Salary:</strong> $${application.jobDetails.salary}<br>
+                    <strong>Skills:</strong> ${application.jobDetails.skills}<br>
+                    <strong>Company:</strong> ${application.jobDetails.company}<br>
+                    <strong>Description:</strong> ${application.jobDetails.description}
+                `;
+
+                applicationItem.appendChild(applicationTitle);
+                applicationItem.appendChild(applicationDetails);
+                applicationItem.appendChild(jobDetails);
+
+                applicationsList.appendChild(applicationItem);
+            });
+        }
+
+        // Fetch and display applications when the page loads
+        window.onload = fetchApplications;
+    </script>
+    <footer class="relative pt-16 pb-16 overflow-clip bg-[rgb(238,238,238)] lg:pb-8" id="footer">
+        <div class="container">
+            <div class="row mb-12 gap-y-8">
+                <div class="col lg:w-[40%] text-left">
+                    <a class="navbar-brand text-white mb-5 md:mb-6 lg:mb-8" href="/">
+                        <img src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" />
+                    </a>
+                    <div class="mb-5 md:mb-6 lg:mb-8"></div>
+                </div>
+                <div class="col lg:w-[30%]">
+                    <div class="row">
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Company</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">About Us</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Careers</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Blog</a>
+                        </div>
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Contact</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">+123 456-7890</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">info@fin.sweet</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col lg:w-[30%] md:mb-0 flex flex-col gap-y-2">
+                    <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto] bg-[rgb(238,238,238)]">Stay Updated</p>
+                    <form>
+                        <div class="row gap-y-3">
+                            <div class="col">
+                                <input class="form-input bg-[rgb(248,248,255)]" type="email" name="email" placeholder="Type email here" required="" />
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-primary btn-lg text-[rgb(238,238,238)] bg-[rgb(40,33,56)]" type="submit">Subscribe</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

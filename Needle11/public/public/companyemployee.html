@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Employees | Needel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --primary-light: #9c4dcc;
+            --primary-dark: #6a1b9a;
+            --white: #ffffff;
+            --light-bg: #f8f5ff;
+            --text: #4c3c92;
+            --text-light: #6d6d6d;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --border: 1px solid #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--white), var(--light-bg));
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--primary);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.9;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--white);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 6rem auto 2rem;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-light);
+        }
+
+        /* Employee Table */
+        .employee-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .search-add {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            padding: 0.5rem 1rem;
+            border: var(--border);
+            border-radius: 6px;
+            width: 250px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Table Styles */
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .employee-table th {
+            background-color: var(--light-bg);
+            color: var(--primary-dark);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .employee-table td {
+            padding: 1rem;
+            border-bottom: var(--border);
+            color: var(--text);
+        }
+
+        .employee-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .employee-table tr:hover {
+            background-color: rgba(138, 43, 226, 0.05);
+        }
+
+        .employee-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.5rem;
+        }
+
+        .employee-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #e6f7ee;
+            color: #00a854;
+        }
+
+        .status-on-leave {
+            background-color: #fff7e6;
+            color: #fa8c16;
+        }
+
+        .status-inactive {
+            background-color: #fff1f0;
+            color: #f5222d;
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .action-icons a {
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .action-icons a:hover {
+            color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .main-content {
+                margin-top: 8rem;
+                padding: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .search-add {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .employee-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Needel</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+                <a href="employer.html">Employer Portal</a>
+                <a href="login.html">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Company Employees</h1>
+            <p>View and manage all current employees in your organization</p>
+        </div>
+
+        <div class="employee-section">
+            <div class="section-header">
+                <h2 class="section-title">Employee Directory</h2>
+                <div class="search-add">
+                    <input type="text" class="search-bar" placeholder="Search employees...">
+                    
+                </div>
+            </div>
+
+            <table class="employee-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                        <th>Hire Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesTableBody">
+                    <tr class="empty-state-row">
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h3>No employees found</h3>
+                                <p>Get started by adding your first employee</p>
+                                
+                                    
+                    
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Highlight current page in navigation
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.style.fontWeight = '700';
+                    link.style.opacity = '1';
+                }
+            });
+    
+            // Simple search functionality
+            const searchBar = document.querySelector('.search-bar');
+            searchBar.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('.employee-table tbody tr:not(.empty-state-row)');
+                
+                if (rows.length === 0) return;
+                
+                let hasMatches = false;
+                
+                rows.forEach(row => {
+                    const name = row.querySelector('.employee-name').textContent.toLowerCase();
+                    const position = row.cells[1].textContent.toLowerCase();
+                    const department = row.cells[2].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm)) {
+                        row.style.display = '';
+                        hasMatches = true;
+                    } else if (position.includes(searchTerm)) {
+                        row.style.display = '';
+                        hasMatches = true;
+                    } else if (department.includes(searchTerm)) {
+                        row.style.display = '';
+                        hasMatches = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide empty state based on search results
+                const emptyState = document.querySelector('.empty-state-row');
+                if (emptyState) {
+                    emptyState.style.display = hasMatches ? 'none' : '';
+                }
+            });
+            
+            // In a real application, you would fetch employee data from an API here
+            // fetchEmployees();
+        });
+        
+        // Example function to fetch employees from an API
+        /*
+        async function fetchEmployees() {
+            try {
+                const response = await fetch('/api/employees');
+                const employees = await response.json();
+                
+                const tableBody = document.getElementById('employeesTableBody');
+                tableBody.innerHTML = '';
+                
+                if (employees.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr class="empty-state-row">
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <h3>No employees found</h3>
+                                    <p>Get started by adding your first employee</p>
+                                    <button class="btn" onclick="window.location.href='add-employee.html'" style="margin-top: 1rem;">
+                                        <i class="fas fa-plus"></i> Add Employee
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                employees.forEach(employee => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="employee-name">
+                                <img src="${employee.avatar || 'default-avatar.png'}" alt="Employee" class="employee-avatar">
+                                ${employee.name}
+                            </div>
+                        </td>
+                        <td>${employee.position}</td>
+                        <td>${employee.department}</td>
+                        <td>${employee.hireDate}</td>
+                        <td><span class="status status-${employee.status.toLowerCase().replace(' ', '-')}">${employee.status}</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="/employees/${employee.id}" title="View Profile"><i class="fas fa-eye"></i></a>
+                                <a href="/employees/${employee.id}/edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                <a href="#" title="Message"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        }
+        */
+    </script>
+</body>
+</html>

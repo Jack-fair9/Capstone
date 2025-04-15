@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - Needle</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: relative;
+        }
+        
+        .profile-emoji-container {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .profile-emoji {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #4a6fa5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            border: 3px solid #4a6fa5;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-emoji:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .change-emoji-btn {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            background: #4a6fa5;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .emoji-picker {
+            position: absolute;
+            top: 150px;
+            left: 0;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: none;
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .emoji-picker.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .emoji-category {
+            margin-bottom: 15px;
+        }
+        
+        .emoji-category h4 {
+            color: #4a6fa5;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+        
+        .emoji-option {
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+        
+        .emoji-option:hover {
+            background: #e0e9f5;
+            transform: scale(1.2);
+        }
+        
+        .profile-info h1 {
+            color: #4a6fa5;
+            margin-bottom: 10px;
+        }
+        
+        .profile-info p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info .company-email {
+            font-weight: 600;
+            color: #4a6fa5;
+        }
+        
+        .profile-info .joining-date {
+            font-style: italic;
+            color: #777;
+        }
+        
+        .logout-btn {
+            padding: 8px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+        
+        .profile-sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            width: 100px;
+            color: #555;
+        }
+        
+        .detail-value {
+            flex: 1;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: #4a6fa5;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .error-message {
+            color: #c62828;
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #2e7d32;
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="profile-header">
+                <div class="profile-emoji-container">
+                    <div id="profileEmoji" class="profile-emoji">👤</div>
+                    <button class="change-emoji-btn" onclick="toggleEmojiPicker()">✏️</button>
+                    <div id="emojiPicker" class="emoji-picker">
+                        <div class="emoji-category">
+                            <h4>People</h4>
+                            <div class="emoji-grid">
+                                <div class="emoji-option" onclick="selectEmoji('👨‍💼')">👨‍💼</div>
+                                <div class="emoji-option" onclick="selectEmoji('👩‍💼')">👩‍💼</div>
+                                <div class="emoji-option" onclick="selectEmoji('🧑‍💼')">🧑‍💼</div>
+                                <div class="emoji-option" onclick="selectEmoji('👨‍🔧')">👨‍🔧</div>
+                                <div class="emoji-option" onclick="selectEmoji('👩‍🔧')">👩‍🔧</div>
+                                <div class="emoji-option" onclick="selectEmoji('🧑‍🔧')">🧑‍🔧</div>
+                                <div class="emoji-option" onclick="selectEmoji('👨‍🔬')">👨‍🔬</div>
+                                <div class="emoji-option" onclick="selectEmoji('👩‍🔬')">👩‍🔬</div>
+                                <div class="emoji-option" onclick="selectEmoji('🧑‍🔬')">🧑‍🔬</div>
+                                <div class="emoji-option" onclick="selectEmoji('👨‍💻')">👨‍💻</div>
+                                <div class="emoji-option" onclick="selectEmoji('👩‍💻')">👩‍💻</div>
+                                <div class="emoji-option" onclick="selectEmoji('🧑‍💻')">🧑‍💻</div>
+                            </div>
+                        </div>
+                        <div class="emoji-category">
+                            <h4>Smileys</h4>
+                            <div class="emoji-grid">
+                                <div class="emoji-option" onclick="selectEmoji('😀')">😀</div>
+                                <div class="emoji-option" onclick="selectEmoji('😃')">😃</div>
+                                <div class="emoji-option" onclick="selectEmoji('😄')">😄</div>
+                                <div class="emoji-option" onclick="selectEmoji('😁')">😁</div>
+                                <div class="emoji-option" onclick="selectEmoji('😆')">😆</div>
+                                <div class="emoji-option" onclick="selectEmoji('😅')">😅</div>
+                                <div class="emoji-option" onclick="selectEmoji('🤣')">🤣</div>
+                                <div class="emoji-option" onclick="selectEmoji('😂')">😂</div>
+                                <div class="emoji-option" onclick="selectEmoji('🙂')">🙂</div>
+                                <div class="emoji-option" onclick="selectEmoji('🙃')">🙃</div>
+                                <div class="emoji-option" onclick="selectEmoji('😉')">😉</div>
+                                <div class="emoji-option" onclick="selectEmoji('😊')">😊</div>
+                            </div>
+                        </div>
+                        <div class="emoji-category">
+                            <h4>Animals</h4>
+                            <div class="emoji-grid">
+                                <div class="emoji-option" onclick="selectEmoji('🐶')">🐶</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐱')">🐱</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐭')">🐭</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐹')">🐹</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐰')">🐰</div>
+                                <div class="emoji-option" onclick="selectEmoji('🦊')">🦊</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐻')">🐻</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐼')">🐼</div>
+                                <div class="emoji-option" onclick="selectEmoji('🦁')">🦁</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐮')">🐮</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐷')">🐷</div>
+                                <div class="emoji-option" onclick="selectEmoji('🐸')">🐸</div>
+                            </div>
+                        </div>
+                        <div class="emoji-category">
+                            <h4>Objects</h4>
+                            <div class="emoji-grid">
+                                <div class="emoji-option" onclick="selectEmoji('💼')">💼</div>
+                                <div class="emoji-option" onclick="selectEmoji('📁')">📁</div>
+                                <div class="emoji-option" onclick="selectEmoji('📊')">📊</div>
+                                <div class="emoji-option" onclick="selectEmoji('📈')">📈</div>
+                                <div class="emoji-option" onclick="selectEmoji('📉')">📉</div>
+                                <div class="emoji-option" onclick="selectEmoji('📆')">📆</div>
+                                <div class="emoji-option" onclick="selectEmoji('📅')">📅</div>
+                                <div class="emoji-option" onclick="selectEmoji('✏️')">✏️</div>
+                                <div class="emoji-option" onclick="selectEmoji('📝')">📝</div>
+                                <div class="emoji-option" onclick="selectEmoji('📌')">📌</div>
+                                <div class="emoji-option" onclick="selectEmoji('📍')">📍</div>
+                                <div class="emoji-option" onclick="selectEmoji('🎯')">🎯</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="employeeName">Loading...</h1>
+                    <p id="employeePosition"></p>
+                    <p id="employeeDepartment"></p>
+                    <p class="company-email" id="companyEmail"></p>
+                    <p class="joining-date">Joined on: <span id="joiningDate"></span></p>
+                    <p id="employeeStatus"></p>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </header>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        
+        <div class="dashboard-content">
+            <div class="profile-sidebar">
+                <h2 class="section-title">Contact Information</h2>
+                <div class="detail-row">
+                    <span class="detail-label">Full Name:</span>
+                    <span class="detail-value" id="fullName">loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value" id="employeeEmail">loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone:</span>
+                    <span class="detail-value" id="employeePhone">loading...</span>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <h2 class="section-title">Employment Details</h2>
+                <div class="detail-row">
+                    <span class="detail-label">Company:</span>
+                    <span class="detail-value" id="companyName">loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Department:</span>
+                    <span class="detail-value" id="department">loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Position:</span>
+                    <span class="detail-value" id="position">loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Joining Date:</span>
+                    <span class="detail-value" id="formattedJoiningDate">loading...</span>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 30px;">Recent Activity</h2>
+                <div id="recentActivity">
+                    <p>No recent activity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get employee ID from URL or localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const employeeId = urlParams.get('id');
+            const token = localStorage.getItem('employeeToken');
+            const storedEmployee = localStorage.getItem('employeeData');
+            
+            // First try to use the stored employee data
+            if (storedEmployee) {
+                try {
+                    const employee = JSON.parse(storedEmployee);
+                    displayEmployeeData(employee);
+                    
+                    // Still fetch fresh data in background if we have an ID
+                    if (employeeId && token) {
+                        fetchEmployeeData(employeeId, token);
+                    }
+                    return;
+                } catch (e) {
+                    console.error('Error parsing stored employee data:', e);
+                }
+            }
+            
+            // If no stored data but we have an ID and token, fetch from server
+            if (employeeId && token) {
+                fetchEmployeeData(employeeId, token);
+            } else {
+                showError('Please login first');
+                setTimeout(() => {
+                    window.location.href = 'employeelogin.html';
+                }, 2000);
+            }
+            
+            // Close emoji picker when clicking outside
+            document.addEventListener('click', function(event) {
+                const emojiPicker = document.getElementById('emojiPicker');
+                const profileEmoji = document.getElementById('profileEmoji');
+                const changeBtn = document.querySelector('.change-emoji-btn');
+                
+                if (emojiPicker && !emojiPicker.contains(event.target) && 
+                    event.target !== profileEmoji && event.target !== changeBtn) {
+                    emojiPicker.classList.remove('show');
+                }
+            });
+        });
+
+        async function fetchEmployeeData(employeeId, token) {
+            try {
+                showLoading(true);
+                
+                const response = await fetch(`http://localhost:3000/api/employees/${employeeId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data || !data.success) {
+                    throw new Error(data.message || 'Failed to fetch employee data');
+                }
+                
+                // Store the data in localStorage
+                localStorage.setItem('employeeData', JSON.stringify(data.employee));
+                
+                // Display the data
+                displayEmployeeData(data.employee);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Failed to load employee data');
+                
+                // If unauthorized, redirect to login
+                if (error.message.includes('401') || error.message.includes('403')) {
+                    setTimeout(() => {
+                        window.location.href = 'employeelogin.html';
+                    }, 2000);
+                }
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayEmployeeData(employee) {
+            if (!employee) {
+                showError('No employee data received');
+                return;
+            }
+
+            console.log('Displaying employee data:', employee);
+
+            // Profile Header
+            document.getElementById('employeeName').textContent = 
+                employee.fullName || `${employee.firstName} ${employee.lastName}` || employee.email;
+            document.getElementById('employeePosition').textContent = employee.position || 'Not specified';
+            document.getElementById('employeeDepartment').textContent = employee.department || 'Not specified';
+            document.getElementById('employeeStatus').textContent = employee.status || 'Active';
+            
+            // Company email and joining date
+            document.getElementById('companyEmail').textContent = employee.companyEmail || employee.email || 'No company email';
+            
+            const joiningDate = employee.joiningDate ? new Date(employee.joiningDate) : null;
+            document.getElementById('joiningDate').textContent = joiningDate ? 
+                joiningDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }) : 'Unknown';
+            
+            // Profile Emoji
+            if (employee.emoji) {
+                document.getElementById('profileEmoji').textContent = employee.emoji;
+            }
+            
+            // Contact Information
+            document.getElementById('fullName').textContent = 
+                employee.fullName || `${employee.firstName} ${employee.lastName}` || 'Not provided';
+            document.getElementById('employeeEmail').textContent = employee.email || 'Not provided';
+            document.getElementById('employeePhone').textContent = employee.phoneNumber || 'Not provided';
+            
+            // Employment Details
+            document.getElementById('companyName').textContent = employee.companyName || 'Not specified';
+            document.getElementById('department').textContent = employee.department || 'Not specified';
+            document.getElementById('position').textContent = employee.position || 'Not specified';
+            
+            if (joiningDate) {
+                document.getElementById('formattedJoiningDate').textContent = 
+                    joiningDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+            } else {
+                document.getElementById('formattedJoiningDate').textContent = 'Unknown';
+            }
+        }
+
+        function toggleEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.classList.toggle('show');
+        }
+
+        async function selectEmoji(emoji) {
+            try {
+                // Update UI immediately
+                document.getElementById('profileEmoji').textContent = emoji;
+                document.getElementById('emojiPicker').classList.remove('show');
+                
+                // Get employee ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const employeeId = urlParams.get('id');
+                const token = localStorage.getItem('employeeToken');
+                
+                if (!employeeId || !token) {
+                    throw new Error('Session expired. Please login again.');
+                }
+                
+                // Update emoji on server
+                const response = await fetch(`http://localhost:3000/api/employees/${employeeId}/emoji`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ emoji })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to update emoji');
+                }
+                
+                // Update local storage
+                const storedData = localStorage.getItem('employeeData');
+                if (storedData) {
+                    const employee = JSON.parse(storedData);
+                    employee.emoji = emoji;
+                    localStorage.setItem('employeeData', JSON.stringify(employee));
+                }
+                
+                showSuccess('Emoji updated successfully!');
+                
+            } catch (error) {
+                console.error('Error updating emoji:', error);
+                showError('Failed to update emoji. Please try again.');
+            }
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 3000);
+        }
+
+        function showLoading(show) {
+            const loadingElements = document.querySelectorAll(
+                '#employeeName, #fullName, #employeeEmail, #employeePhone, ' +
+                '#companyName, #department, #position, #formattedJoiningDate'
+            );
+            loadingElements.forEach(el => {
+                el.textContent = show ? 'Loading...' : el.textContent;
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('employeeData');
+            localStorage.removeItem('employeeToken');
+            window.location.href = 'employeelogin.html';
+        }
+    </script>
+</body>
+</html>
