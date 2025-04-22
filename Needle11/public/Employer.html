@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Portal - Needle</title>
+    <link rel="stylesheet" href="./aboutus.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f7fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .navbar {
+            background-color: #eeeeee;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-brand img {
+            height: 27px;
+        }
+
+        .navbar-btn {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .navbar-btn span {
+            width: 24px;
+            height: 3px;
+            background-color: #33312e;
+            margin: 2px 0;
+        }
+
+        .navbar-row {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .navbar-col {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .navbar-col li {
+            margin: 0;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #33312e;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .nav-link:hover {
+            background-color: #d3d3d3;
+        }
+
+        .btn-secondary {
+            background-color: #282138;
+            color: #eeeeee;
+        }
+
+        .btn-secondary:hover {
+            background-color: #352c4b;
+        }
+
+        .form-container {
+            display: flex;
+            width: 900px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 50px auto;
+        }
+
+        .left-panel, .right-panel {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .left-panel {
+            background-color: #282138;
+            color: white;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #282138;
+        }
+
+        .benefits {
+            margin-bottom: 30px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .benefit-item i {
+            margin-right: 10px;
+            color: #ffd700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            border-color: #282138;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #352c4b;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #282138;
+        }
+
+        .secondary-btn {
+            background-color: #f0f0f0;
+            color: #282138;
+            margin-top: 10px;
+        }
+
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+
+        .divider span {
+            background-color: white;
+            padding: 0 10px;
+            position: relative;
+            z-index: 2;
+            color: #777;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #282138;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        footer {
+            margin-top: auto;
+            background-color: #eeeeee;
+            padding: 2rem 0;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #33312e;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #33312e;
+            text-decoration: none;
+            font-weight: 300;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .subscribe-form {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .subscribe-form input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .subscribe-form button {
+            padding: 0.5rem 1rem;
+            background-color: #282138;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .subscribe-form button:hover {
+            background-color: #352c4b;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="/">
+            <img src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" alt="company logo" />
+        </a>
+        <button class="navbar-btn" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="navbar-row">
+            <li><a class="nav-link" href="index.html"><b>Home</b></a></li>
+            <li><a class="nav-link" href="career.html"><b>Careers</b></a></li>
+            <li><a class="nav-link" href="aboutus.html"><b>About Us</b></a></li>
+            <li><a class="nav-link" href="contact.html"><b>Contact Us</b></a></li>
+            <li><a class="nav-link btn-secondary" href="login.html">Log In/My Account</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container">
+        <div class="left-panel">
+            <div class="logo">Needle</div>
+            <h1>Employer Portal</h1>
+            <div class="benefits">
+                <div class="benefit-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Post unlimited jobs</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-search"></i>
+                    <span>Access top talent</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Track applications</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Manage your company profile</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div id="loginForm">
+                <h2>Company Login</h2>
+                <div id="loginMessage" class="message"></div>
+
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your company email">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="showForgotPassword()">Forgot password?</a>
+                </div>
+
+                <button onclick="login()">Login</button>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <button class="secondary-btn" onclick="showRegisterForm()">Register Your Company</button>
+                <button class="secondary-btn" onclick="window.location.href='employeelogin.html'">Employee Login</button>
+            </div>
+
+            <div id="registerForm" style="display: none;">
+                <h2>Company Registration</h2>
+                <div id="registerMessage" class="message"></div>
+
+                <div class="form-group">
+                    <label for="companyName">Company Name</label>
+                    <input type="text" id="companyName" placeholder="Enter your company name">
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" placeholder="Enter your company email">
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                </div>
+
+                <button onclick="register()">Register</button>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <button class="secondary-btn" onclick="showLoginForm()">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-column">
+                <a class="navbar-brand" href="/">
+                    <img src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" alt="company logo" />
+                </a>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul class="footer-links">
+                    <li><a href="#">+123 456-7890</a></li>
+                    <li><a href="#">info@fin.sweet</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Stay Updated</h3>
+                <form class="subscribe-form">
+                    <input type="email" name="email" placeholder="Type email here" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showForgotPassword() {
+            window.open('forget.html', '_blank');
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const messageElement = document.getElementById('loginMessage');
+
+            if (!email || !password) {
+                showMessage(messageElement, 'Please fill in all fields', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/employer-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                showMessage(messageElement, 'Login successful! Redirecting...', false);
+
+                setTimeout(() => {
+                    window.location.href = '/employerpage.html';
+                }, 1500);
+
+            } catch (error) {
+                showMessage(messageElement, error.message, true);
+            }
+        }
+
+        async function register() {
+            const companyName = document.getElementById('companyName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageElement = document.getElementById('registerMessage');
+
+            if (!companyName || !email || !password || !confirmPassword) {
+                showMessage(messageElement, 'Please fill in all fields', true);
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage(messageElement, 'Passwords do not match', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/employer-signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, companyName })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Registration failed');
+                }
+
+                showMessage(messageElement, 'Registration successful! Please check your email for verification.', false);
+
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 3000);
+
+            } catch (error) {
+                showMessage(messageElement, error.message, true);
+            }
+        }
+
+        function showMessage(element, message, isError) {
+            element.textContent = message;
+            element.className = isError ? 'message error' : 'message success';
+            element.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

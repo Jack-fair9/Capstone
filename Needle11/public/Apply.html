@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application | Needle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Updated Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            width: 100%;
+            background-color: rgb(238, 238, 238);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgb(51, 49, 46);
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+            padding: 8px 12px;
+        }
+
+        .nav-link:hover {
+            color: rgb(40, 33, 56);
+        }
+
+        .btn-secondary {
+            background-color: rgb(40, 33, 56);
+            color: rgb(238, 238, 238);
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+            transition: background-color 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgb(60, 50, 80);
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        h1 {
+            color: #000000;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .job-details {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        .job-details h2 {
+            color: #000000;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .job-details p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .job-details strong {
+            color: #000000;
+        }
+
+        .job-description {
+            white-space: pre-wrap;
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #000000;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            text-align: left;
+            margin: 12px 0 5px;
+            color: #000000;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #6c5b8b;
+            background: #f9f9f9;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #372f6c;
+            transform: scale(1.02);
+        }
+
+        #progress {
+            display: none;
+            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: green;
+        }
+
+        #error {
+            display: none;
+            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: red;
+        }
+
+        .footer {
+            width: 100%;
+            background: #ffffff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer .company-info, .footer .contact, .footer .subscribe {
+            flex: 1;
+            text-align: center;
+        }
+
+        .footer .company-info a, .footer .contact a, .footer .subscribe a {
+            color: #000000;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .footer .subscribe input {
+            padding: 10px;
+            border: 1px solid #000000;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .footer .subscribe button {
+            padding: 10px 20px;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Updated Navbar -->
+    <nav class="navbar" id="navbar">
+        <a class="navbar-brand" href="/">
+            <img alt="company logo" src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" width="134" height="27" />
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="home.html">Careers</a>
+            <a class="nav-link" href="aboutus.html">AboutUs</a>
+            <a class="nav-link" href="contact.html">Contact us</a>
+            <a class="btn-secondary" href="login.html">Log In/My Account</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Job Application</h1>
+
+        <div id="jobDetails" class="job-details"></div>
+
+        <form id="jobApplicationForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="resume">Upload Resume:</label>
+            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+
+            <label for="coverletter">Upload Cover Letter (optional):</label>
+            <input type="file" id="coverletter" name="coverletter" accept=".pdf,.doc,.docx">
+
+            <label for="referral">Employee Referral:</label>
+            <select id="referral" name="referral" required>
+                <option value="">Select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+
+            <button type="submit" id="submitBtn">Submit Application</button>
+
+            <div id="progress">Uploading... Please wait.</div>
+            <div id="error"></div>
+        </form>
+    </div>
+
+    <div class="footer">
+        <div class="company-info">
+            <a href="about.html">About Us</a>
+            <a href="careers.html">Careers</a>
+            <a href="blog.html">Blog</a>
+        </div>
+        <div class="contact">
+            <p>Contact</p>
+            <a href="tel:+1234567890">+123 456-7890</a>
+            <a href="mailto:support@example.com">support@example.com</a>
+        </div>
+        <div class="subscribe">
+            <p>Stay Updated</p>
+            <input type="email" placeholder="Type email here">
+            <button>Subscribe</button>
+        </div>
+    </div>
+
+    <script>
+        function getJobDetailsFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobDetails = {};
+            for (const [key, value] of urlParams.entries()) {
+                jobDetails[key] = decodeURIComponent(value.replace(/\+/g, ' '));
+            }
+            return jobDetails;
+        }
+
+        function displayJobDetails() {
+            const jobDetails = getJobDetailsFromURL();
+            const jobDetailsElement = document.getElementById("jobDetails");
+
+            if (Object.keys(jobDetails).length === 0) {
+                jobDetailsElement.innerHTML = `<p>No job details available</p>`;
+                return;
+            }
+
+            const jobDescription = jobDetails.description && jobDetails.description.trim() !== ''
+                ? jobDetails.description
+                : 'No description provided.';
+
+            jobDetailsElement.innerHTML = `
+                <h2>Job Details</h2>
+                <p><strong>Position:</strong> ${jobDetails.position || 'Not specified'}</p>
+                <p><strong>Field:</strong> ${jobDetails.field || 'Not specified'}</p>
+                <p><strong>Location:</strong> ${jobDetails.location || 'Not specified'}</p>
+                <p><strong>Salary:</strong> ${jobDetails.salary && jobDetails.salary.trim() !== '' ? '$' + jobDetails.salary : 'Not specified'}</p>
+                <p><strong>Skills:</strong> ${jobDetails.skills || 'Not specified'}</p>
+                <p><strong>Company:</strong> ${jobDetails.company || 'Not specified'}</p>
+                <p><strong>Description:</strong></p>
+                <div class="job-description">${jobDescription}</div>
+            `;
+        }
+
+        document.getElementById("jobApplicationForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const jobDetails = getJobDetailsFromURL();
+
+            // Append job details to formData
+            for (const key in jobDetails) {
+                formData.append(key, jobDetails[key]);
+            }
+
+            const submitBtn = document.getElementById("submitBtn");
+            const progress = document.getElementById("progress");
+            const errorDiv = document.getElementById("error");
+
+            const resume = document.getElementById("resume").files[0];
+            const coverLetter = document.getElementById("coverletter").files[0];
+            const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+
+            if (!resume || !allowedExtensions.exec(resume.name)) {
+                alert("Please upload a valid resume file (PDF, DOC, DOCX).");
+                return false;
+            }
+
+            if (coverLetter && !allowedExtensions.exec(coverLetter.name)) {
+                alert("Please upload a valid cover letter file (PDF, DOC, DOCX).");
+                return false;
+            }
+
+            submitBtn.disabled = true;
+            progress.style.display = "block";
+            errorDiv.style.display = "none";
+            errorDiv.innerText = "";
+
+            try {
+                const response = await fetch("/upload-job", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    progress.innerText = "Application submitted successfully!";
+                    const referral = document.getElementById('referral').value;
+                    setTimeout(() => {
+                        window.location.href = referral === 'yes' ? 'question.html' : 'confirmation.html';
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || "Failed to upload.");
+                }
+            } catch (error) {
+                errorDiv.style.display = "block";
+                errorDiv.innerText = error.message;
+            } finally {
+                submitBtn.disabled = false;
+                setTimeout(() => progress.style.display = "none", 2000);
+            }
+        });
+
+        // Load job details on page load
+        window.onload = displayJobDetails;
+    </script>
+
+</body>
+</html>

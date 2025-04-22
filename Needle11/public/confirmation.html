@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Confirmation | Needel</title>
+    <link rel="stylesheet" href="./apply.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: rgb(238, 238, 238);
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+        }
+
+        .navbar-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar-row ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: rgb(51, 49, 46);
+            font-weight: 500;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgb(220, 220, 220);
+            border-radius: 4px;
+        }
+
+        .btn-secondary {
+            background-color: rgb(40, 33, 56);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgb(55, 45, 70);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: black;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            text-align: center;
+            margin-top: 80px;
+            margin-bottom: 150px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: rgb(40, 33, 56);
+            text-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: 400;
+        }
+
+        .back-home-btn {
+            display: inline-block;
+            background-color: rgb(40, 33, 56);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-home-btn:hover {
+            background-color: rgb(55, 45, 70);
+        }
+
+        footer {
+            background-color: rgb(238, 238, 238);
+            padding: 16px;
+            width: 100%;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img alt="company logo" src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" />
+            </a>
+            <div class="navbar-row">
+                <ul>
+                    <li><a class="nav-link" href="index.html"><b>Home</b></a></li>
+                    <li><a class="nav-link" href="home.html"><b>Careers</b></a></li>
+                    <li><a class="nav-link" href="aboutus.html"><b>About Us</b></a></li>
+                    <li><a class="nav-link" href="contact.html"><b>Contact Us</b></a></li>
+                    <li><a class="btn btn-secondary" href="login.html">Log In/My Account</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h1>Thank You for Your Application!</h1>
+        <p>Your application has been submitted successfully. Our team will review it, and we will get back to you shortly.</p>
+        <a href="index.html" class="back-home-btn">Back to Home</a>
+    </div>
+
+    <footer class="relative pt-16 pb-16 overflow-clip bg-[rgb(238,238,238)] lg:pb-8" id="footer">
+        <div class="container">
+            <div class="row mb-12 gap-y-8">
+                <div class="col lg:w-[40%] text-left">
+                    <a class="navbar-brand text-white mb-5 md:mb-6 lg:mb-8" href="/">
+                        <img src="images/96b7806e-a8b9-41da-86ce-dde8d712999a.png" />
+                    </a>
+                    <div class="mb-5 md:mb-6 lg:mb-8"></div>
+                </div>
+                <div class="col lg:w-[30%]">
+                    <div class="row">
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Company</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">About Us</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Careers</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">Blog</a>
+                        </div>
+                        <div class="col sm:w-6/12 mb-8 lg:mb-0 flex flex-col gap-y-3">
+                            <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto]">Contact</p>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">+123 456-7890</a>
+                            <a class="block text-[rgb(51,49,46)] font-light font-[roboto] hover:text-neutral-200" href="#">info@fin.sweet</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col lg:w-[30%] md:mb-0 flex flex-col gap-y-2">
+                    <p class="mb-3 text-xl text-[rgb(51,49,46)] font-semibold font-[roboto] bg-[rgb(238,238,238)]">Stay Updated</p>
+                    <form>
+                        <div class="row gap-y-3">
+                            <div class="col">
+                                <input class="form-input bg-[rgb(248,248,255)]" type="email" name="email" placeholder="Type email here" required="" />
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-primary btn-lg text-[rgb(238,238,238)] bg-[rgb(40,33,56)]" type="submit">Subscribe</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

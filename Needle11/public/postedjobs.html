@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posted Jobs | Needel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ffffff, #d3c0eb);
+            color: black;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #4c3c92;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .navbar a:hover {
+            background-color: #6c5b8b;
+        }
+
+        h1 {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            color: #4c3c92;
+            font-size: 2.5rem;
+            margin-top: 120px;
+        }
+
+        .job-list {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .job-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .job-item:last-child {
+            border-bottom: none;
+        }
+
+        .job-title {
+            font-size: 1.5rem;
+            color: #4c3c92;
+        }
+
+        .job-details {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .status-dropdown {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .update-button {
+            background-color: #4c3c92;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1rem;
+        }
+
+        .update-button:hover {
+            background-color: #6c5b8b;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="Home.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="employer_account.html">Employer's Account</a>
+        <a href="faq.html">FAQ</a>
+        <a href="help.html">Help</a>
+    </div>
+
+    <h1>Posted Jobs</h1>
+
+    <div class="job-list" id="postedJobList">
+        <!-- Posted jobs will be injected here -->
+    </div>
+
+    <script>
+        function displayPostedJobs() {
+            const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+            const jobList = document.getElementById("postedJobList");
+    
+            jobList.innerHTML = "";
+    
+            if (jobs.length === 0) {
+                jobList.innerHTML = "<p>No jobs posted yet.</p>";
+                return;
+            }
+    
+            jobs.forEach((job, index) => {
+                const jobItem = document.createElement("div");
+                jobItem.classList.add("job-item");
+                
+                // Add class for closed jobs
+                if (job.status === 'closed') {
+                    jobItem.style.opacity = "0.7";
+                    jobItem.style.borderLeft = "4px solid #dc3545";
+                    jobItem.style.paddingLeft = "10px";
+                }
+    
+                // Rest of your job display code remains the same...
+                jobItem.innerHTML = `
+                    <div class="job-title">${job.position}</div>
+                    <div class="job-details">
+                        <strong>Field:</strong> ${job.field}<br>
+                        <strong>Location:</strong> ${job.location}<br>
+                        <strong>Salary:</strong> $${job.salary}<br>
+                        <strong>Skills:</strong> ${job.skills}<br>
+                        <strong>Company:</strong> ${job.company}<br>
+                        <strong>Description:</strong> ${job.description}
+                    </div>
+                    <select class="status-dropdown">
+                        <option value="open" ${job.status === 'open' ? 'selected' : ''}>Open</option>
+                        <option value="closed" ${job.status === 'closed' ? 'selected' : ''}>Closed</option>
+                        <option value="hired" ${job.status === 'hired' ? 'selected' : ''}>Hired</option>
+                    </select>
+                    <button class="update-button">Update</button>
+                `;
+    
+                // Add event listeners
+                const dropdown = jobItem.querySelector('.status-dropdown');
+                const button = jobItem.querySelector('.update-button');
+                button.addEventListener('click', () => updateJobStatus(index, dropdown.value));
+    
+                jobList.appendChild(jobItem);
+            });
+        }
+    
+        function updateJobStatus(index, status) {
+            const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+            jobs[index].status = status;
+            localStorage.setItem("jobs", JSON.stringify(jobs));
+            
+            // Set notification
+            localStorage.setItem("jobUpdateNotification", JSON.stringify({
+                index,
+                status,
+                position: jobs[index].position
+            }));
+            
+            displayPostedJobs(); // Refresh view
+        }
+    
+        window.onload = displayPostedJobs;
+    </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Refer a Candidate | Needle</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #eef2f7, #ffffff);
+      padding: 30px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      color: #333;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #4c8bf5;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 139, 245, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 14px;
+      width: 100%;
+      background-color: #4c8bf5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button:hover {
+      background-color: #3b72d8;
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #otherPositionGroup {
+      display: none;
+      margin-top: 10px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success, .error {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .success {
+      background-color: #e6ffed;
+      color: #2b8a3e;
+      border: 1px solid #b2f2bb;
+    }
+
+    .error {
+      background-color: #fff0f0;
+      color: #c92a2a;
+      border: 1px solid #ffc9c9;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      body {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Refer a Candidate</h2>
+  <form id="referralForm">
+    <div class="form-group">
+      <label for="referrerName">Your Name:</label>
+      <input type="text" id="referrerName" name="referrerName" required />
+    </div>
+
+    <div class="form-group">
+      <label for="referrerEmail">Your Email:</label>
+      <input type="email" id="referrerEmail" name="referrerEmail" required />
+    </div>
+
+    <div class="form-group">
+      <label for="candidateName">Candidate's Name:</label>
+      <input type="text" id="candidateName" name="candidateName" required />
+    </div>
+
+    <div class="form-group">
+      <label for="candidateEmail">Candidate's Email:</label>
+      <input type="email" id="candidateEmail" name="candidateEmail" required />
+    </div>
+
+    <div class="form-group">
+      <label for="position">Position Referred For:</label>
+      <select id="position" name="position" required onchange="toggleOtherPosition()">
+        <option value="">Select a position</option>
+        <option value="Software Engineer">Software Engineer</option>
+        <option value="Data Analyst">Data Analyst</option>
+        <option value="Network Administrator">Network Administrator</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div id="otherPositionGroup" class="form-group">
+      <label for="otherPosition">Enter Position:</label>
+      <input type="text" id="otherPosition" name="otherPosition" />
+    </div>
+
+    <div class="form-group">
+      <label for="message">Optional Message:</label>
+      <textarea id="message" name="message" rows="4" placeholder="Include any additional info or context..."></textarea>
+    </div>
+
+    <button type="submit" id="submitButton">
+      <span id="buttonSpinner" class="loading" style="display: none;"></span>
+      <span id="buttonText">Submit Referral</span>
+    </button>
+
+    <div class="success" id="successMsg" style="display: none;">
+      <p>Referral submitted successfully!</p>
+      <p>Both you and the candidate should receive confirmation emails shortly.</p>
+    </div>
+    <div class="error" id="errorMsg" style="display: none;"></div>
+  </form>
+</div>
+
+<script>
+  function toggleOtherPosition() {
+    const position = document.getElementById('position').value;
+    const otherGroup = document.getElementById('otherPositionGroup');
+    const otherInput = document.getElementById('otherPosition');
+
+    if (position === 'Other') {
+      otherGroup.style.display = 'block';
+      otherInput.required = true;
+    } else {
+      otherGroup.style.display = 'none';
+      otherInput.required = false;
+    }
+  }
+
+  document.getElementById('referralForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+    const submitButton = document.getElementById('submitButton');
+    const buttonText = document.getElementById('buttonText');
+    const buttonSpinner = document.getElementById('buttonSpinner');
+    
+    // Reset messages
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+    
+    // Show loading state
+    submitButton.disabled = true;
+    buttonText.textContent = 'Submitting...';
+    buttonSpinner.style.display = 'inline-block';
+
+    // Prepare form data
+    const formData = new FormData(event.target);
+    const data = {
+      referrerName: formData.get('referrerName'),
+      referrerEmail: formData.get('referrerEmail'),
+      candidateName: formData.get('candidateName'),
+      candidateEmail: formData.get('candidateEmail'),
+      position: formData.get('position'),
+      otherPosition: formData.get('otherPosition'),
+      message: formData.get('message')
+    };
+    
+    // Validate position if "Other" is selected
+    if (data.position === 'Other' && !data.otherPosition) {
+      errorMsg.textContent = 'Please specify the position';
+      errorMsg.style.display = 'block';
+      submitButton.disabled = false;
+      buttonText.textContent = 'Submit Referral';
+      buttonSpinner.style.display = 'none';
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/submit-referral', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error('Server error:', result);
+        throw new Error(result.message || 'Failed to submit referral');
+      }
+
+      console.log('Success:', result);
+      
+      // Show success message
+      successMsg.style.display = 'block';
+      // Reset form
+      event.target.reset();
+      document.getElementById('otherPositionGroup').style.display = 'none';
+      
+    } catch (error) {
+      console.error('Error:', error);
+      let errorMessage = error.message || 'Failed to submit referral. Please try again.';
+      
+      // Special handling for network errors
+      if (error.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      }
+      
+      errorMsg.textContent = errorMessage;
+      errorMsg.style.display = 'block';
+      
+    } finally {
+      // Reset button state
+      submitButton.disabled = false;
+      buttonText.textContent = 'Submit Referral';
+      buttonSpinner.style.display = 'none';
+    }
+  });
+
+  // Initialize form
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleOtherPosition(); // Set initial state
+  });
+</script>
+
+</body>
+</html>

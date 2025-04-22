@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Employees</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+        .status-active {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .emoji-cell {
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+        }
+        
+        /* Celebration styles */
+        .anniversary-celebration {
+            position: relative;
+            animation: celebrate 2s ease-in-out;
+        }
+        
+        .anniversary-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #e67e22;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.05); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+        
+        /* Different colors for different milestones */
+        .months-3 { background-color: rgba(52, 152, 219, 0.1); }
+        .months-6 { background-color: rgba(155, 89, 182, 0.1); }
+        .months-12 { background-color: rgba(241, 196, 15, 0.1); }
+    </style>
+</head>
+<body>
+    <h1>Company Employees</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Emoji</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Company</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Joining Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTableBody">
+            <tr>
+                <td colspan="9" class="loading">Loading employees...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/employees');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to fetch employees');
+                }
+
+                const tableBody = document.getElementById('employeeTableBody');
+                tableBody.innerHTML = '';
+
+                if (data.employees.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center;">No employees found</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                data.employees.forEach(employee => {
+                    const row = document.createElement('tr');
+                    
+                    // Calculate months at company
+                    const joiningDate = employee.joiningDate ? new Date(employee.joiningDate) : null;
+                    const monthsAtCompany = joiningDate 
+                        ? Math.floor((new Date() - joiningDate) / (1000 * 60 * 60 * 24 * 30))
+                        : 0;
+                    
+                    // Check for anniversary milestones
+                    const isAnniversary = monthsAtCompany > 0 && 
+                                         (monthsAtCompany % 3 === 0 || monthsAtCompany === 6 || monthsAtCompany === 12);
+                    
+                    const joiningDateFormatted = joiningDate
+                        ? joiningDate.toLocaleDateString()
+                        : 'N/A';
+
+                    const statusClass = employee.status === 'active'
+                        ? 'status-active'
+                        : 'status-inactive';
+
+                    row.innerHTML = `
+                        <td class="emoji-cell">${employee.emoji || '👤'}</td>
+                        <td>${employee.firstName} ${employee.lastName}</td>
+                        <td>${employee.email}</td>
+                        <td>${employee.phoneNumber || 'N/A'}</td>
+                        <td>${employee.companyName}</td>
+                        <td>${employee.department}</td>
+                        <td>${employee.position}</td>
+                        <td>${joiningDateFormatted}</td>
+                        <td class="${statusClass}">${employee.status || 'active'}</td>
+                    `;
+
+                    // Add celebration class if anniversary
+                    if (isAnniversary) {
+                        row.classList.add('anniversary-celebration');
+                        
+                        // Add specific class based on months
+                        if (monthsAtCompany % 12 === 0) {
+                            row.classList.add('months-12');
+                        } else if (monthsAtCompany % 6 === 0) {
+                            row.classList.add('months-6');
+                        } else if (monthsAtCompany % 3 === 0) {
+                            row.classList.add('months-3');
+                        }
+                        
+                        // Create and add anniversary badge
+                        const badge = document.createElement('div');
+                        badge.className = 'anniversary-badge';
+                        badge.textContent = monthsAtCompany;
+                        row.querySelector('.emoji-cell').appendChild(badge);
+                        
+                        // Add confetti effect
+                        if (monthsAtCompany >= 6) {
+                            setTimeout(() => createConfetti(row), 500);
+                        }
+                    }
+
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error loading employees:', error);
+                document.getElementById('employeeTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" class="error">
+                            Failed to load employees. ${error.message}
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+        
+        function createConfetti(row) {
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', 
+                            '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50',
+                            '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800'];
+            
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * 100}%`;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                row.appendChild(confetti);
+                
+                // Animate confetti
+                setTimeout(() => {
+                    confetti.style.opacity = '1';
+                    confetti.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg)`;
+                    confetti.style.transition = 'all 1s ease-out';
+                    
+                    setTimeout(() => {
+                        confetti.style.opacity = '0';
+                        setTimeout(() => confetti.remove(), 1000);
+                    }, 1000);
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>
