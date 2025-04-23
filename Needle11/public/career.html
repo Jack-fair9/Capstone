@@ -121,7 +121,7 @@
         container.innerHTML = "<p style='text-align:center;'>No jobs found.</p>";
       } else {
         filteredJobs.forEach((job, index) => {
-          const link = `apply.html?jobId=${index}&title=${encodeURIComponent(job.position)}&company=${encodeURIComponent(job.company)}&location=${encodeURIComponent(job.location)}&field=${encodeURIComponent(job.field)}&status=${job.status}&description=${encodeURIComponent(job.description)}`;
+          const link = `Apply.html?jobId=${index}&title=${encodeURIComponent(job.position)}&company=${encodeURIComponent(job.company)}&location=${encodeURIComponent(job.location)}&field=${encodeURIComponent(job.field)}&status=${job.status}&description=${encodeURIComponent(job.description)}`;
           container.innerHTML += `
             <div class="job-card">
               <h2>${job.position}</h2>
