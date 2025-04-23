@@ -333,64 +333,69 @@
         }
 
         document.getElementById("jobApplicationForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const formData = new FormData(this);
-            const jobDetails = getJobDetailsFromURL();
+    const formData = new FormData(this);
+    const jobDetails = getJobDetailsFromURL();
 
-            // Append job details to formData
-            for (const key in jobDetails) {
-                formData.append(key, jobDetails[key]);
-            }
+    // Append job details to formData
+    for (const key in jobDetails) {
+        formData.append(key, jobDetails[key]);
+    }
 
-            const submitBtn = document.getElementById("submitBtn");
-            const progress = document.getElementById("progress");
-            const errorDiv = document.getElementById("error");
+    const submitBtn = document.getElementById("submitBtn");
+    const progress = document.getElementById("progress");
+    const errorDiv = document.getElementById("error");
 
-            const resume = document.getElementById("resume").files[0];
-            const coverLetter = document.getElementById("coverletter").files[0];
-            const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+    const resume = document.getElementById("resume").files[0];
+    const coverLetter = document.getElementById("coverletter").files[0];
+    const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
 
-            if (!resume || !allowedExtensions.exec(resume.name)) {
-                alert("Please upload a valid resume file (PDF, DOC, DOCX).");
-                return false;
-            }
+    if (!resume || !allowedExtensions.exec(resume.name)) {
+        alert("Please upload a valid resume file (PDF, DOC, DOCX).");
+        return false;
+    }
 
-            if (coverLetter && !allowedExtensions.exec(coverLetter.name)) {
-                alert("Please upload a valid cover letter file (PDF, DOC, DOCX).");
-                return false;
-            }
+    if (coverLetter && !allowedExtensions.exec(coverLetter.name)) {
+        alert("Please upload a valid cover letter file (PDF, DOC, DOCX).");
+        return false;
+    }
 
-            submitBtn.disabled = true;
-            progress.style.display = "block";
-            errorDiv.style.display = "none";
-            errorDiv.innerText = "";
+    submitBtn.disabled = true;
+    progress.style.display = "block";
+    errorDiv.style.display = "none";
+    errorDiv.innerText = "";
 
-            try {
-                const response = await fetch("/upload-job", {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    progress.innerText = "Application submitted successfully!";
-                    const referral = document.getElementById('referral').value;
-                    setTimeout(() => {
-                        window.location.href = referral === 'yes' ? 'question.html' : 'confirmation.html';
-                    }, 2000);
-                } else {
-                    throw new Error(data.message || "Failed to upload.");
-                }
-            } catch (error) {
-                errorDiv.style.display = "block";
-                errorDiv.innerText = error.message;
-            } finally {
-                submitBtn.disabled = false;
-                setTimeout(() => progress.style.display = "none", 2000);
-            }
+    try {
+        const response = await fetch("/upload-job", {
+            method: "POST",
+            body: formData
         });
+
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            if (response.ok) {
+                progress.innerText = "Application submitted successfully!";
+                const referral = document.getElementById('referral').value;
+                setTimeout(() => {
+                    window.location.href = referral === 'yes' ? 'question.html' : 'confirmation.html';
+                }, 2000);
+            } else {
+                throw new Error(data.message || "Failed to upload.");
+            }
+        } else {
+            const text = await response.text();
+            throw new Error(`Unexpected response format: ${text}`);
+        }
+    } catch (error) {
+        errorDiv.style.display = "block";
+        errorDiv.innerText = error.message;
+    } finally {
+        submitBtn.disabled = false;
+        setTimeout(() => progress.style.display = "none", 2000);
+    }
+});
 
         // Load job details on page load
         window.onload = displayJobDetails;
